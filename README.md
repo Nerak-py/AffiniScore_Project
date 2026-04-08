@@ -1,8 +1,5 @@
 # AffiniScore_Project
 
-<p align="center">
-  <img src="banner.png" alt="AffiniScore Banner" width="100%">
-</p>
 
 Aplicación móvil para fortalecer relaciones de pareja mediante análisis de afinidad.
 AffiniScore es una aplicación móvil inteligente desarrollada por la academia tecnológica Triskeledu, cuyo objetivo es fortalecer las relaciones de pareja mediante el uso de tecnología y análisis de datos.
