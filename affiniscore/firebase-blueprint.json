@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "App user profile with gamification stats",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "partnerId": { "type": "string", "description": "UID of the linked partner" },
+        "coupleId": { "type": "string", "description": "ID of the shared couple document" },
+        "xp": { "type": "number" },
+        "level": { "type": "number" },
+        "streak": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Couple": {
+      "title": "Couple",
+      "description": "Shared document between two partners",
+      "type": "object",
+      "properties": {
+        "user1Id": { "type": "string" },
+        "user2Id": { "type": "string" },
+        "sharedXP": { "type": "number" },
+        "streakCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["user1Id", "user2Id"]
+    },
+    "Mission": {
+      "title": "Mission",
+      "description": "Daily missions for the couple",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "xpReward": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "completed", "expired"] },
+        "createdBy": { "type": "string" },
+        "coupleId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "xpReward", "coupleId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual user profiles"
+    },
+    "/couples/{coupleId}": {
+      "schema": "Couple",
+      "description": "Shared data between partners"
+    },
+    "/couples/{coupleId}/missions/{missionId}": {
+      "schema": "Mission",
+      "description": "Missions assigned to a couple"
+    }
+  }
+}
