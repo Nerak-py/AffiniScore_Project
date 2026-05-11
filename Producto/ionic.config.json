@@ -1,7 +1,0 @@
-{
-  "name": "affiniscore-app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}
