@@ -1,0 +1,33 @@
+<ion-content class="trivia-content">
+  <div class="trivia-container fade-in">
+    
+    <div class="logo-wrapper slide-down">
+      <div class="heart-circle">
+        <ion-icon name="heart"></ion-icon>
+      </div>
+      <h2 class="logo-text">AffiniScore</h2>
+      <span class="logo-sub">CRECIENDO JUNTOS...</span>
+    </div>
+
+    <div class="header-section slide-up">
+      <div class="mission-badge">Misión 1</div>
+      <h1 class="trivia-title">¡Demuestra cuánto conoces a {{ partnerName }}!</h1>
+      <p class="trivia-subtitle">Responde correctamente para subir a Nivel 2 y ganar tus primeros XP.</p>
+    </div>
+
+    <div class="question-card slide-up-delayed">
+      <h2 class="question-text">{{ getQuestionText() }}</h2>
+      
+      <div class="input-group">
+        <ion-input [(ngModel)]="userAnswer" type="text" placeholder="Tu respuesta..." class="elegant-input"></ion-input>
+      </div>
+
+      <p class="error-msg" *ngIf="showError">¡Ups! Esa no es la respuesta correcta. Inténtalo de nuevo.</p>
+
+      <ion-button expand="block" (click)="verifyAnswer()" class="elegant-button" [disabled]="!userAnswer || isSubmitting">
+        <span *ngIf="!isSubmitting">Validar Respuesta</span>
+        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
