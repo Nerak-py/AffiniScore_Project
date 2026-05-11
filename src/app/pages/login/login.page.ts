@@ -26,7 +26,7 @@ export class LoginPage {
     this.loading.set(false);
     
     if (!error) {
-      this.navCtrl.navigateRoot('/path');
+      this.navCtrl.navigateRoot('/tabs/path');
     } else {
       console.error('Error in login:', error.message);
       const toast = await this.toastController.create({

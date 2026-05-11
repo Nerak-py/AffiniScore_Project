@@ -3,7 +3,7 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -15,15 +15,14 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/profile/profile.page').then(m => m.ProfilePage)
       },
       {
+        path: 'chat',
+        loadComponent: () => import('../pages/therapist-chat/therapist-chat.page').then(m => m.TherapistChatPage)
+      },
+      {
         path: '',
-        redirectTo: '/tabs/path',
+        redirectTo: 'path',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/path',
-    pathMatch: 'full',
-  },
+  }
 ];

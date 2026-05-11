@@ -31,11 +31,11 @@
     
     <!-- SVG Path dinámico con viewBox ajustado -->
     <svg class="path-svg" viewBox="0 0 100 1200" preserveAspectRatio="none">
-      <path [attr.d]="pathD" fill="none" stroke="#F9A8B1" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+      <path [attr.d]="pathD()" fill="none" stroke="#F9A8B1" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
     </svg>
 
     <!-- Nodos -->
-    <div *ngFor="let node of nodes" 
+    <div *ngFor="let node of nodes()" 
           class="node-wrapper"
           [style.left.%]="node.x" 
           [style.top.px]="node.y">
@@ -54,6 +54,11 @@
         <span class="label-text" [ngClass]="node.status">
           {{node.id}}. {{node.title}}
         </span>
+      </div>
+      
+      <!-- Tooltip visual para nodos bloqueados -->
+      <div class="tooltip" *ngIf="node.status === 'locked'">
+        <ion-icon name="lock-closed" style="font-size: 10px; margin-right: 4px;"></ion-icon> Bloqueado
       </div>
     </div>
 

@@ -43,7 +43,7 @@ export class RegisterPage {
         position: 'top'
       });
       await toast.present();
-      this.navCtrl.navigateRoot('/path');
+      this.navCtrl.navigateRoot('/tabs/path');
     }
   }
 

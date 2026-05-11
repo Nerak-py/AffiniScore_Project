@@ -16,6 +16,13 @@
 
 <ion-content class="ion-padding" scroll-y="true">
   <div class="profile-container">
+    
+    <!-- Bienvenida / Usuario Actual -->
+    <div class="welcome-header text-center mb-4">
+      <h1 class="welcome-title">¡Hola, {{ supabase.userProfile()?.full_name || supabase.currentUser()?.user_metadata?.['full_name'] || 'Usuario' }}!</h1>
+      <p class="welcome-subtitle">Estás usando esta cuenta.</p>
+    </div>
+
     <!-- Sección de Código del Usuario -->
     <div class="card glass-card">
       <h2 class="card-title">Tu Código de Pareja</h2>
@@ -59,7 +66,38 @@
         <ion-icon name="heart"></ion-icon>
       </div>
       <h2 class="card-title text-center">¡Estás vinculado!</h2>
-      <p class="card-subtitle text-center">Tú y tu pareja ya comparten este viaje.</p>
+      <p class="card-subtitle text-center">
+        Tú y tu pareja ya comparten este viaje.
+      </p>
+
+      <div class="couple-names-container text-center mt-3">
+        <p class="user-name">
+          <strong>Tú:</strong> {{ supabase.userProfile()?.full_name || supabase.currentUser()?.user_metadata?.['full_name'] || 'Cargando...' }}
+        </p>
+        <p class="partner-name" *ngIf="supabase.partnerProfile()">
+          <strong>Tu pareja:</strong> {{ supabase.partnerProfile()?.full_name || supabase.partnerProfile()?.couple_code }}
+        </p>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        fill="outline"
+        color="danger"
+        class="unlink-button mt-4" 
+        (click)="unlinkPartner()"
+        [disabled]="isLinking()">
+        {{ isLinking() ? 'Desvinculando...' : 'Desvincular' }}
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        fill="clear"
+        color="warning"
+        class="mt-2" 
+        (click)="forceReset()"
+        [disabled]="isLinking()">
+        Force Reset (Borrar mi couple_id)
+      </ion-button>
     </div>
   </div>
 </ion-content>

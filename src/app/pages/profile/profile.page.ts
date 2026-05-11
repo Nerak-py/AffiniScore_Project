@@ -27,7 +27,12 @@ export class ProfilePage implements OnInit {
     addIcons({ arrowBackOutline, logOutOutline, heart });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const user = this.supabase.currentUser();
+    if (user) {
+      // Fuerza un fetch fresco siempre que entramos a la página
+      await this.supabase.loadUserProfile(user.id);
+    }
   }
 
   goBack() {
@@ -42,6 +47,31 @@ export class ProfilePage implements OnInit {
     
     const result = await this.supabase.linkPartnerByCode(this.partnerCode.trim().toUpperCase());
     
+    this.linkSuccess.set(result.success);
+    this.linkMessage.set(result.message);
+    this.isLinking.set(false);
+
+    if (result.success) {
+      setTimeout(() => {
+        this.router.navigate(['/tabs/path']);
+      }, 800);
+    }
+  }
+
+  async unlinkPartner() {
+    this.isLinking.set(true);
+    this.linkMessage.set('');
+    
+    const result = await this.supabase.unlinkPartner();
+    
+    this.linkSuccess.set(result.success);
+    this.linkMessage.set(result.message);
+    this.isLinking.set(false);
+  }
+
+  async forceReset() {
+    this.isLinking.set(true);
+    const result = await this.supabase.forceResetCoupleId();
     this.linkSuccess.set(result.success);
     this.linkMessage.set(result.message);
     this.isLinking.set(false);
