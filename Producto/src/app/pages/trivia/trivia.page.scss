@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&display=swap');
+
+ion-content.trivia-content {
+  --background: #fffafa;
+}
+
+.trivia-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100%;
+  padding: 50px 24px;
+  background: radial-gradient(circle at top center, rgba(246, 109, 155, 0.15) 0%, rgba(255, 255, 255, 0) 60%);
+}
+
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  .heart-circle {
+    width: 60px;
+    height: 60px;
+    background: #f66d9b;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(246, 109, 155, 0.3);
+    margin-bottom: 12px;
+    
+    ion-icon {
+      color: white;
+      font-size: 32px;
+      margin-top: 2px;
+    }
+  }
+  
+  .logo-text {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: #f66d9b;
+    margin: 0 0 4px 0;
+    font-style: italic;
+  }
+  
+  .logo-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 9px;
+    color: #999;
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .mission-badge {
+    background: #f66d9b;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(246, 109, 155, 0.25);
+  }
+
+  .trivia-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #1a1e29;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .trivia-subtitle {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: #888;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+}
+
+.question-card {
+  background: white;
+  border-radius: 28px;
+  padding: 32px 24px;
+  width: 100%;
+  box-shadow: 0 12px 35px rgba(246, 109, 155, 0.08);
+  text-align: center;
+  border: 1px solid #fdf5f6;
+
+  .question-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    color: #1a1e29;
+    margin-bottom: 30px;
+    line-height: 1.4;
+  }
+
+  .elegant-input {
+    font-family: 'Nunito', sans-serif;
+    --background: #fffafa;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    border: 1px solid #f0e6e8;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    color: #444;
+    transition: all 0.3s ease;
+    
+    &.ion-focused {
+      border-color: #f66d9b;
+      box-shadow: 0 0 0 4px rgba(246, 109, 155, 0.1);
+    }
+  }
+
+  .error-msg {
+    color: #f66d9b;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+
+  .elegant-button {
+    margin-top: 24px;
+    --background: linear-gradient(90deg, #f96eb0 0%, #f65582 100%);
+    --background-hover: linear-gradient(90deg, #f65582 0%, #f96eb0 100%);
+    --background-activated: #e04470;
+    --color: #ffffff;
+    --border-radius: 24px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    --box-shadow: 0 8px 16px rgba(246, 85, 130, 0.25);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.slide-up {
+  opacity: 0;
+  animation: slideUp 0.8s ease-out 0.2s forwards;
+}
+
+.slide-up-delayed {
+  opacity: 0;
+  animation: slideUp 0.8s ease-out 0.4s forwards;
+}
+
+.slide-down {
+  opacity: 0;
+  animation: slideDown 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

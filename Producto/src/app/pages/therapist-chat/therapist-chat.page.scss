@@ -1,0 +1,230 @@
+ion-toolbar.custom-toolbar {
+  --background: #fdf2f8; /* Rosa pastel muy suave */
+  --border-color: transparent;
+  
+  ion-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #831843; /* Magenta/Gris oscuro */
+    letter-spacing: -0.5px;
+  }
+
+  .header-avatar {
+    width: 38px;
+    height: 38px;
+    margin-right: 15px;
+    background: #fbcfe8; /* Rosa pastel más fuerte */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    
+    .afi-icon {
+      color: #be185d;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.chat-content {
+  --background: #fafafa; /* Gris muy suave, casi blanco */
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 60vh;
+  color: #71717a;
+
+  .empty-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: #fdf2f8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(251, 207, 232, 0.4);
+
+    ion-icon {
+      font-size: 3rem;
+      color: #f472b6;
+    }
+  }
+
+  h2 {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #4c1d95; /* Morado/Gris oscuro */
+  }
+
+  p {
+    font-size: 0.95rem;
+    padding: 0 30px;
+    line-height: 1.5;
+  }
+}
+
+.message-wrapper {
+  display: flex;
+  margin-bottom: 18px;
+  max-width: 85%;
+  align-items: flex-end;
+
+  &.user {
+    align-self: flex-end;
+    
+    .message-bubble {
+      background: #ffffff; /* Blanco puro */
+      color: #3f3f46; /* Gris oscuro */
+      border-radius: 24px 24px 4px 24px;
+      border: 1px solid #f4f4f5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+  }
+
+  &.ai {
+    align-self: flex-start;
+
+    .msg-avatar-wrapper {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      margin-right: 10px;
+      background: #fdf2f8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .afi-bubble-icon {
+        color: #f472b6;
+        font-size: 1rem;
+      }
+    }
+
+    .message-bubble {
+      background: #fbcfe8; /* Rosa pastel suave */
+      color: #831843; /* Texto magenta oscuro para buen contraste */
+      border-radius: 24px 24px 24px 4px;
+      box-shadow: 0 2px 8px rgba(251, 207, 232, 0.3);
+    }
+  }
+}
+
+.message-bubble {
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
+
+// Typing indicator
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px !important;
+
+  span {
+    height: 6px;
+    width: 6px;
+    float: left;
+    margin: 0 3px;
+    background-color: #be185d;
+    display: block;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: 1.2s blink infinite ease-in-out;
+
+    &:nth-of-type(1) {
+      animation-delay: 0s;
+    }
+    &:nth-of-type(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-of-type(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+ion-footer {
+  background: #fafafa; /* Debe coincidir con el fondo del chat */
+
+  .footer-toolbar {
+    --background: transparent;
+    --border-width: 0;
+  }
+
+  .input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px 20px; /* Padding inferior extra para dispositivos móviles */
+    background: transparent;
+
+    ion-textarea {
+      --background: #ffffff; /* Píldora blanca */
+      --border-radius: 30px; /* Bordes muy redondos */
+      --padding-start: 20px;
+      --padding-end: 20px;
+      --padding-top: 14px;
+      --padding-bottom: 14px;
+      margin-right: 10px;
+      font-size: 0.95rem;
+      color: #3f3f46;
+      border: 1px solid #e4e4e7; /* Borde gris muy fino */
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      
+      &::part(native) {
+        color: #3f3f46;
+      }
+    }
+
+    ion-button {
+      --color: #ffffff;
+      --background: #f472b6; /* Botón rosado vibrante */
+      --background-hover: #ec4899;
+      --border-radius: 50%;
+      margin: 0;
+      height: 48px;
+      width: 48px;
+      box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3);
+
+      ion-icon {
+        font-size: 1.2rem;
+      }
+      
+      &[disabled] {
+        --background: #f4f4f5;
+        --color: #a1a1aa;
+        box-shadow: none;
+      }
+    }
+  }
+}

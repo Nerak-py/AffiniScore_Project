@@ -1,0 +1,46 @@
+<ion-content class="onboarding-content">
+  <div class="onboarding-container fade-in">
+    
+    <div class="logo-wrapper slide-down">
+      <div class="heart-circle">
+        <ion-icon name="heart"></ion-icon>
+      </div>
+      <h2 class="logo-text">AffiniScore</h2>
+      <span class="logo-sub">CRECIENDO JUNTOS...</span>
+    </div>
+
+    <div class="header-section slide-up">
+      <h1 class="welcome-title">Bienvenido de nuevo</h1>
+      <p class="welcome-subtitle">Para personalizar tus misiones, cuéntanos un poco más sobre ti.</p>
+    </div>
+
+    <form [formGroup]="onboardingForm" (ngSubmit)="submitForm()" class="form-section slide-up-delayed">
+      
+      <div class="input-group">
+        <ion-label class="elegant-label">Tu color favorito</ion-label>
+        <ion-input formControlName="favorite_color" type="text" placeholder="Ej. Azul marino" class="elegant-input"></ion-input>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="elegant-label">Tu fecha de cumpleaños</ion-label>
+        <ion-input formControlName="birthday" type="date" class="elegant-input"></ion-input>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="elegant-label">Tu sueño de infancia</ion-label>
+        <ion-input formControlName="childhood_dream" type="text" placeholder="Ej. Ser astronauta" class="elegant-input"></ion-input>
+      </div>
+
+      <div class="input-group">
+        <ion-label class="elegant-label">El lugar donde se conocieron</ion-label>
+        <ion-input formControlName="meeting_place" type="text" placeholder="Ej. En la universidad" class="elegant-input"></ion-input>
+      </div>
+
+      <ion-button expand="block" type="submit" class="elegant-button" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Iniciar Aventura</span>
+        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+      </ion-button>
+
+    </form>
+  </div>
+</ion-content>
