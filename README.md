@@ -22,10 +22,11 @@
 
 - [💖 ¿Qué es AffiniScore?](#-qué-es-affiniscore)
 - [🎯 Nuestro objetivo](#-nuestro-objetivo)
+- [📱 Capturas del Proyecto](#-capturas-del-proyecto)
 - [🌟 Funcionalidades](#-funcionalidades)
 - [🫶 Tecnologías](#-tecnologías)
 - [👥 Equipo](#-equipo)
-- [📱 Capturas del Proyecto](#-capturas-del-proyecto)
+
 
 ---
 ## 💌 ¿Qué es AffiniScore?
@@ -41,6 +42,15 @@ AffiniScore es una aplicación móvil diseñada para fortalecer el vínculo entr
 Actualmente, muchas aplicaciones enfocadas en relaciones de pareja sufren de una baja retención de usuarios. Esto ocurre debido a la falta de incentivos o motivaciones sostenibles a largo plazo.
 
 Nuestra misión es revertir esta tendencia ofreciendo una plataforma que promueva la participación constante y el crecimiento continuo de la relación.
+
+---
+## 📱 Capturas del Proyecto
+
+<p align="center">
+  <img src="SC1.png" width="250">
+  <img src="SC2.png" width="250">
+  <img src="SC3.png" width="250">
+</p>
 
 ---
 ## 🌟 Funcionalidades
@@ -127,14 +137,6 @@ Nuestra misión es revertir esta tendencia ofreciendo una plataforma que promuev
 </tr>
 </table>
 
----
-## 📱 Capturas del Proyecto
-
-<p align="center">
-  <img src="assets/screen1.png" width="250">
-  <img src="assets/screen2.png" width="250">
-  <img src="assets/screen3.png" width="250">
-</p>
 
 ---
 <h3 align="center">
