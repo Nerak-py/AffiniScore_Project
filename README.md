@@ -3,7 +3,26 @@
 <p align="center">
   <img src="logo.png.png" alt="AffiniScore Banner" width="100%">
 </p>
- 
+
+<p align="center">
+  <img src="https://img.shields.io/github/license/Nerak-py/AffiniScore_Project?style=for-the-badge">
+  <img src="https://img.shields.io/github/stars/Nerak-py/AffiniScore_Project?style=for-the-badge">
+  <img src="https://img.shields.io/github/forks/Nerak-py/AffiniScore_Project?style=for-the-badge">
+  <img src="https://img.shields.io/badge/status-active-success?style=for-the-badge">
+</p>
+
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F47068&center=true&vCenter=true&width=700&lines=Proyecto+de+Academia+Tecnológica+Triskeledu;Impulsado+por+DUOC+UC" />
+</p>
+
+---
+
+## 📸 Preview
+
+
+
+---
+
 ### **Sobre el proyecto**
 AffiniScore es una aplicación móvil diseñada para fortalecer el vínculo entre parejas y evitar la monotonía mediante la gamificación. Nuestro objetivo es transformar las interacciones cotidianas en una experiencia dinámica, interactiva y gratificante.
 
