@@ -1,4 +1,4 @@
-# AffiniScore_Project
+<h1 align="center"> Proyecto Affiniscore </h1>
 
 <p align="center">
   <img src="logo.png.png" alt="AffiniScore Banner" width="100%">
