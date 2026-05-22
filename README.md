@@ -1,11 +1,11 @@
 <h1 align="center">💖AffiniScore_Project💖</h1>
 
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Baloo+2&size=26&pause=1200&color=F47068&center=true&vCenter=true&width=900&lines=Proyecto+de+Academia+Tecnológica+Triskeledu;Impulsado+por+DUOC+UC;Gamificando+relaciones+💞;Creciendo+juntos+✨" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Baloo+2&size=26&pause=1200&color=F47068&center=true&vCenter=true&width=900&lines=Proyecto+de+Academia+Tecnológica+Triskeledu;Impulsado+por+Alumnos+de+DUOC+UC;Puntos+para+tu+relacion+💞;Creciendo+juntos+✨" />
 </p>
 
 <p align="center">
-  <img src="logo.png.png" alt="AffiniScore Banner" width="100%">
+  <img src="Diseño sin título (6).png" alt="AffiniScore Banner" width="100%">
 </p>
 
 <p align="center">
@@ -30,10 +30,6 @@
 
 ---
 ## 💌 ¿Qué es AffiniScore?
-
-<p align="center">
-  <img src="Diseño sin título (6).png" alt="AffiniScore Banner" width="100%">
-</p>
 
 AffiniScore es una aplicación móvil diseñada para fortalecer el vínculo entre parejas y evitar la monotonía mediante la gamificación. Nuestro objetivo es transformar las interacciones cotidianas en una experiencia dinámica, interactiva y gratificante.
 
@@ -140,9 +136,13 @@ Nuestra misión es revertir esta tendencia ofreciendo una plataforma que promuev
 
 ---
 <h3 align="center">
-💖 Creciendo juntos con tecnología ✨
+💖 Puntos para tu Relación - Creciendo juntos ✨
 </h3>
 
 <p align="center">
   Desarrollado por Academia Tecnológica Triskeledu + DUOC UC
+</p>
+
+<p align="center">
+  <img src="logo.png.png" alt="AffiniScore Banner" width="100%">
 </p>
