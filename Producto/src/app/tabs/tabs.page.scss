@@ -1,0 +1,197 @@
+/* Capa Superpuesta de Afi */
+.afi-linking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 15000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  box-sizing: border-box;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  
+  &.step-2 {
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none;
+  }
+}
+
+/* Personaje Afi */
+.afi-linking-overlay .character-wrapper {
+  position: relative;
+  width: 115%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15002;
+  display: block;
+}
+
+.afi-linking-overlay .character-image {
+  position: absolute;
+  width: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+  transform-origin: bottom center;
+  z-index: 15002;
+  
+  /* Centrado en móvil */
+  left: 48%;
+  transform: translateX(-50%);
+  animation: breatheCenter 4s infinite ease-in-out;
+  height: 100vh !important;
+  bottom: -20vh;
+
+  @media (min-width: 768px) {
+    left: auto;
+    transform: none;
+    height: 130vh !important;
+    bottom: -20vh !important;
+    right: 5% !important;
+    animation: breathe 4s infinite ease-in-out;
+  }
+}
+
+/* Caja de diálogo */
+.afi-linking-overlay .dialogue-box {
+  background: rgba(22, 18, 38, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 24px;
+  padding-top: 32px;
+  min-height: 130px;
+  max-height: 180px;
+  position: relative;
+  z-index: 15003;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto !important;
+}
+
+.afi-linking-overlay .dialogue-tag {
+  position: absolute;
+  top: -16px;
+  left: 24px;
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+  color: white;
+  font-weight: 800;
+  padding: 6px 20px;
+  border-radius: 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.afi-linking-overlay .dialogue-text {
+  color: #f3f4f6;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 500;
+  text-align: left;
+  flex-grow: 1;
+  word-wrap: break-word;
+}
+
+.afi-linking-overlay .advance-indicator {
+  position: absolute;
+  bottom: 16px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.afi-linking-overlay .indicator-arrow {
+  color: #ff758c;
+  font-size: 20px;
+  animation: blink-arrow-tab 1.2s infinite ease-in-out;
+}
+
+/* Modificaciones dinámicas en el Tab Bar y Botones */
+.custom-tab-bar {
+  z-index: 10;
+  transition: all 0.3s ease;
+  
+  &.dimmed {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  &.raise-tab-bar {
+    z-index: 20000 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Botones apagados en el Paso 3 */
+.dimmed-button {
+  opacity: 0.2 !important;
+  pointer-events: none !important;
+  transition: opacity 0.4s ease;
+}
+
+/* Botón Perfil destacado (Spotlight) */
+.highlight-profile {
+  position: relative !important;
+  z-index: 20001 !important;
+  background: #ffffff !important;
+  border-radius: 16px;
+  box-shadow: 0 0 20px 8px rgba(255, 117, 140, 0.6), 0 0 30px 15px rgba(255, 126, 179, 0.4) !important;
+  animation: pulseGlow 2s infinite ease-in-out;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  transition: all 0.4s ease;
+  transform: scale(1.05);
+
+  ion-icon, ion-label {
+    color: #ff758c !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* Animaciones */
+@keyframes breatheCenter {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.02); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes blink-arrow-tab {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(4px); }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 15px 4px rgba(255, 117, 140, 0.6), 0 0 25px 8px rgba(255, 126, 179, 0.3);
+    transform: scale(1.05);
+  }
+  50% {
+    box-shadow: 0 0 25px 10px rgba(255, 117, 140, 0.9), 0 0 40px 18px rgba(255, 126, 179, 0.5);
+    transform: scale(1.08);
+  }
+  100% {
+    box-shadow: 0 0 15px 4px rgba(255, 117, 140, 0.6), 0 0 25px 8px rgba(255, 126, 179, 0.3);
+    transform: scale(1.05);
+  }
+}

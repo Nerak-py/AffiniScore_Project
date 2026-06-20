@@ -1,0 +1,31 @@
+<ion-content class="cutscene-content" [scrollY]="false">
+  <div class="cutscene-container" (click)="onScreenClick()">
+    
+    <!-- Personaje (Afi) -->
+    <div class="character-wrapper">
+      <img 
+        [src]="getCharacterImage()" 
+        (error)="onImageError($event)" 
+        alt="Afi" 
+        class="character-image"
+      />
+    </div>
+
+    <!-- Caja de Diálogo -->
+    <div class="dialogue-box">
+      <!-- Etiqueta del Nombre -->
+      <div class="dialogue-tag">Afi</div>
+      
+      <!-- Texto de Diálogo -->
+      <div class="dialogue-text">
+        {{ displayedText }}
+      </div>
+
+      <!-- Icono parpadeante para indicar que se puede avanzar -->
+      <div class="advance-indicator" *ngIf="!isTyping">
+        <span class="indicator-arrow">▼</span>
+      </div>
+    </div>
+    
+  </div>
+</ion-content>

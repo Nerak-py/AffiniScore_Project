@@ -1,0 +1,167 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="light-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToPath()" class="back-btn">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Trivia de Pareja</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="trivia-content">
+  <!-- Confeti de Victoria -->
+  @if (showConfetti()) {
+    <div class="confetti-wrapper">
+      @for (piece of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track $index) {
+        <div class="confetti-piece" [style.left.%]="100 * ($index / 20)" [style.animation-delay.ms]="$index * 150"></div>
+      }
+    </div>
+  }
+
+  <div class="container-wrapper ion-padding">
+
+    @if (!isCompleted()) {
+      <!-- ESTADO: CARGANDO -->
+      @if (gameState() === 'loading') {
+        <div class="centered-state">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <p class="state-text">Preparando las preguntas...</p>
+        </div>
+      }
+
+      <!-- ESTADO: JUGANDO / FEEDBACK -->
+      @if ((gameState() === 'playing' || gameState() === 'feedback') && currentQuestion()) {
+
+        <!-- Barra de progreso superior -->
+        <div class="progress-section">
+          <div class="progress-label">
+            <span class="progress-text">Pregunta {{ currentIndex() + 1 }} de {{ totalQuestions() }}</span>
+            <span class="progress-score">{{ correctCount() }} aciertos</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" [style.width.%]="progress() * 100"></div>
+          </div>
+        </div>
+
+        <!-- Tarjeta de pregunta -->
+        <div class="question-card white-card">
+          <div class="category-badge">
+            <ion-icon name="heart-outline"></ion-icon>
+            <span>¿Conoces a {{ partnerName() }}?</span>
+          </div>
+
+          <h2 class="question-text">{{ currentQuestion().question }}</h2>
+
+          <!-- Opciones de respuesta -->
+          <div class="options-grid">
+            @for (option of currentQuestion().options; track $index) {
+              <button 
+                class="option-btn" 
+                [class]="'option-btn ' + getOptionClass(option)"
+                [disabled]="selectedOption() !== null"
+                (click)="selectOption(option)">
+                <span class="option-letter">{{ ['A', 'B', 'C', 'D'][$index] }}</span>
+                <span class="option-text">{{ option }}</span>
+                @if (selectedOption() !== null && getOptionClass(option) === 'correct') {
+                  <ion-icon name="checkmark-circle-outline" class="option-icon correct-icon"></ion-icon>
+                }
+                @if (selectedOption() !== null && getOptionClass(option) === 'incorrect') {
+                  <ion-icon name="close-circle-outline" class="option-icon incorrect-icon"></ion-icon>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Feedback y botón siguiente -->
+        @if (gameState() === 'feedback') {
+          <div class="feedback-section" [class.correct-feedback]="isCorrectFeedback()" [class.incorrect-feedback]="!isCorrectFeedback()">
+            @if (isCorrectFeedback()) {
+              <p class="feedback-text">🎉 ¡Correcto! Conoces bien a {{ partnerName() }}</p>
+            } @else {
+              <p class="feedback-text">😅 La respuesta correcta era: <strong>{{ currentQuestion().correctAnswer }}</strong></p>
+            }
+          </div>
+
+          <button (click)="nextQuestion()" class="action-btn-primary next-btn">
+            @if (currentIndex() + 1 >= totalQuestions()) {
+              Ver Resultados
+            } @else {
+              Siguiente Pregunta →
+            }
+          </button>
+        }
+
+      }
+
+      <!-- ESTADO: FINALIZADO -->
+      @if (gameState() === 'finished') {
+        <div class="finished-layout">
+          <div class="finished-card white-card">
+            <div class="trophy-large-badge pulse">
+              <ion-icon name="trophy-outline"></ion-icon>
+            </div>
+            <h2 class="finished-title">¡Trivia Completada!</h2>
+            <p class="finished-subtitle">{{ getScoreMessage() }}</p>
+
+            <div class="score-ring">
+              <span class="score-number">{{ correctCount() }}/{{ totalQuestions() }}</span>
+              <span class="score-label">Aciertos</span>
+            </div>
+
+            <div class="xp-gain-box">
+              <span class="xp-number">+50 XP</span>
+              <span class="xp-text">Has subido a Nivel 2</span>
+            </div>
+
+            <!-- Desglose de respuestas -->
+            <div class="results-breakdown">
+              <h3 class="breakdown-title">Tus respuestas</h3>
+              @for (result of results(); track $index) {
+                <div class="result-row" [class.result-correct]="result.isCorrect" [class.result-wrong]="!result.isCorrect">
+                  <ion-icon [name]="getResultIcon(result)" class="result-icon"></ion-icon>
+                  <div class="result-info">
+                    <p class="result-question">{{ result.question }}</p>
+                    <p class="result-answer">
+                      @if (result.isCorrect) {
+                        Tu respuesta: <strong>{{ result.selectedAnswer }}</strong>
+                      } @else {
+                        Respondiste: {{ result.selectedAnswer }} · Correcta: <strong>{{ result.correctAnswer }}</strong>
+                      }
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+            Volver al Camino
+          </button>
+        </div>
+      }
+    } @else {
+      <!-- BLOQUE B: VISTA ESTÁTICA SI YA FUE SUPERADA -->
+      <div class="finished-layout">
+        <div class="finished-card white-card">
+          <div class="trophy-large-badge pulse">
+            <ion-icon name="ribbon-outline"></ion-icon>
+          </div>
+          <h2 class="finished-title">¡Trivia Completada!</h2>
+          <p class="finished-subtitle">Ya demostraste cuánto conoces a tu pareja.</p>
+
+          <div class="xp-gain-box">
+            <span class="xp-number">+50 XP</span>
+            <span class="xp-text">Recompensa obtenida</span>
+          </div>
+        </div>
+
+        <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+          Volver al Camino
+        </button>
+      </div>
+    }
+
+  </div>
+</ion-content>

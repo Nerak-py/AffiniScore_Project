@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-title class="header-title">Premios y Recompensas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" scroll-y="true">
+  <div class="page-container">
+    
+    <!-- Panel de XP Destacado -->
+    <div class="card xp-summary-card text-center mb-4">
+      <div class="couple-icon-wrapper">
+        <ion-icon name="gift-outline" class="gift-icon"></ion-icon>
+      </div>
+      <h2 class="xp-title">Tus XP Disponibles</h2>
+      <p class="xp-amount">{{ supabase.userScore().xp }} XP</p>
+      <p class="xp-note">* Los premios se canjean usando tus XP individuales. ¡Sigan colaborando!</p>
+    </div>
+
+    <!-- Lista de Recompensas -->
+    <h2 class="section-title">Premios Disponibles</h2>
+    <div class="rewards-grid">
+      <div *ngFor="let reward of rewards()" class="reward-card glass-card">
+        <div class="reward-header">
+          <h3 class="reward-title">{{ reward.title }}</h3>
+          <span class="cost-badge">{{ reward.cost }} XP</span>
+        </div>
+        <p class="reward-desc">{{ reward.description }}</p>
+        <div class="reward-footer">
+          <ion-button 
+            expand="block" 
+            class="redeem-btn gradient-button" 
+            (click)="redeem(reward)"
+            [disabled]="isRedeeming() || !canAfford(reward.cost)"
+          >
+            Canjear Premio
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de Canjes -->
+    <div class="history-section mt-5 mb-4" *ngIf="redeemedHistory().length > 0">
+      <h2 class="section-title">Historial de Canjes</h2>
+      <div class="history-list">
+        <div *ngFor="let item of redeemedHistory()" class="history-item glass-card">
+          <div class="history-icon">
+            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+          </div>
+          <div class="history-details">
+            <h4>{{ item.titulo }}</h4>
+            <p>Canjeado por <strong>{{ getUserName(item.user_id) }}</strong> • {{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <div class="history-cost">
+            -{{ item.costo }} XP
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,239 @@
+-- =========================================================================
+-- A. TABLA PRINCIPAL: profiles (Perfiles de Usuarios)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    full_name TEXT,
+    onboarding_completed BOOLEAN DEFAULT false NOT NULL,
+    color_favorito TEXT,
+    cumpleanos DATE,
+    sueno_infancia TEXT,
+    lugar_encuentro TEXT,
+    genero TEXT,
+    pronombre_preferido TEXT,
+    xp INTEGER DEFAULT 0 NOT NULL,
+    hearts INTEGER DEFAULT 5 NOT NULL,
+    level INTEGER DEFAULT 0 NOT NULL,
+    streak INTEGER DEFAULT 0 NOT NULL,
+    couple_id TEXT, -- Guarda el ID de la pareja (texto compatible)
+    couple_code TEXT -- Código alfanumérico único para vinculación
+);
+
+-- Habilitar RLS en profiles
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- B. GENERADOR DE CÓDIGOS DE INVITACIÓN (AF-XXXX)
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.generate_random_code()
+RETURNS TEXT AS $$
+DECLARE
+  chars TEXT := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  result TEXT := 'AF-'; -- Prefijo original de la app
+  i INTEGER;
+BEGIN
+  FOR i IN 1..4 LOOP
+    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+  END LOOP;
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE public.profiles 
+ALTER COLUMN couple_code SET DEFAULT public.generate_random_code();
+
+-- =========================================================================
+-- C. TRIGGER: Creación Automática de Perfil al Registrarse en Supabase Auth
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, onboarding_completed, xp, hearts, level, streak)
+  VALUES (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'full_name', 'Nuevo Usuario'),
+    false,
+    0,
+    5,
+    0,
+    0
+  );
+  RETURN new;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW 
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- =========================================================================
+-- D. TABLA: ruleta_game (Actividad 4 - Ruleta Picante)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.ruleta_game (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    partner_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    turn_id UUID REFERENCES public.profiles(id) NOT NULL,
+    challenge TEXT,
+    status TEXT DEFAULT 'pending' NOT NULL,
+    user_spins INTEGER DEFAULT 0 NOT NULL,
+    partner_spins INTEGER DEFAULT 0 NOT NULL,
+    CONSTRAINT unique_couple_ruleta UNIQUE (user_id, partner_id)
+);
+
+ALTER TABLE public.ruleta_game ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- E. TABLA: deseos_game (Actividad 6 - Buzón de los Deseos)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.deseos_game (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    partner_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    deseos_user_1 JSONB DEFAULT '[]'::jsonb NOT NULL,
+    deseos_user_2 JSONB DEFAULT '[]'::jsonb NOT NULL,
+    status TEXT DEFAULT 'pending' NOT NULL,
+    CONSTRAINT unique_couple_deseos UNIQUE (user_id, partner_id)
+);
+
+ALTER TABLE public.deseos_game ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- F. TABLA: mision_secreta_game (Actividad 5 - Misiones Secretas)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.mision_secreta_game (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    partner_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    misiones_user_1 JSONB NOT NULL,
+    misiones_user_2 JSONB NOT NULL,
+    sorpresas_validadas_1 INTEGER DEFAULT 0 NOT NULL,
+    sorpresas_validadas_2 INTEGER DEFAULT 0 NOT NULL,
+    status TEXT DEFAULT 'pending' NOT NULL,
+    CONSTRAINT unique_couple_mision UNIQUE (user_id, partner_id)
+);
+
+ALTER TABLE public.mision_secreta_game ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- G. TABLA: most_likely_answers (Actividad 3 - Quién es más probable que...)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.most_likely_answers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    couple_id UUID NOT NULL,
+    answers JSONB NOT NULL,
+    CONSTRAINT unique_user_couple UNIQUE (user_id, couple_id)
+);
+
+ALTER TABLE public.most_likely_answers ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- H. TABLA: recompensas_canjeadas (Módulo de Recompensas)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.recompensas_canjeadas (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    couple_id UUID,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    recompensa_key TEXT NOT NULL,
+    titulo TEXT NOT NULL,
+    costo INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.recompensas_canjeadas ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- I. TABLAS: chat_sessions & chat_messages (Memoria del Historial de AFI)
+-- =========================================================================
+CREATE TABLE IF NOT EXISTS public.chat_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    titulo TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.chat_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID REFERENCES public.chat_sessions(id) ON DELETE CASCADE NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('user', 'model')),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+
+-- =========================================================================
+-- J. PROCEDIMIENTO ALMACENADO (RPC): desvincular_pareja
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.desvincular_pareja(p_user_id uuid, p_partner_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    -- 1. Desvincular perfiles en la tabla profiles
+    UPDATE public.profiles 
+    SET couple_id = NULL, level = 0, xp = 0, hearts = 5, streak = 0 
+    WHERE id = p_user_id OR id = p_partner_id;
+
+    -- 2. Eliminar historial de actividades de la pareja
+    DELETE FROM public.ruleta_game WHERE (user_id = p_user_id AND partner_id = p_partner_id) OR (user_id = p_partner_id AND partner_id = p_user_id);
+    DELETE FROM public.deseos_game WHERE (user_id = p_user_id AND partner_id = p_partner_id) OR (user_id = p_partner_id AND partner_id = p_user_id);
+    DELETE FROM public.mision_secreta_game WHERE (user_id = p_user_id AND partner_id = p_partner_id) OR (user_id = p_partner_id AND partner_id = p_user_id);
+    DELETE FROM public.most_likely_answers WHERE (user_id = p_user_id AND couple_id = p_partner_id) OR (user_id = p_partner_id AND couple_id = p_user_id);
+    DELETE FROM public.recompensas_canjeadas WHERE user_id = p_user_id OR user_id = p_partner_id;
+END;
+$$;
+
+
+-- =========================================================================
+-- K. POLÍTICAS RLS (Row Level Security) UNIFICADAS
+-- =========================================================================
+
+-- Políticas para: profiles
+CREATE POLICY "Permitir select público" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Permitir update total para autenticados" ON public.profiles FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+-- Políticas para: ruleta_game
+CREATE POLICY "Permitir lectura para la pareja en ruleta" ON public.ruleta_game FOR SELECT USING (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir inserción para la pareja en ruleta" ON public.ruleta_game FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir actualización para la pareja en ruleta" ON public.ruleta_game FOR UPDATE USING (auth.uid() = user_id OR auth.uid() = partner_id);
+
+-- Políticas para: deseos_game
+CREATE POLICY "Permitir lectura para la pareja en deseos" ON public.deseos_game FOR SELECT USING (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir inserción para la pareja en deseos" ON public.deseos_game FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir actualización para la pareja en deseos" ON public.deseos_game FOR UPDATE USING (auth.uid() = user_id OR auth.uid() = partner_id);
+
+-- Políticas para: mision_secreta_game
+CREATE POLICY "Permitir lectura para la pareja en mision_secreta" ON public.mision_secreta_game FOR SELECT USING (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir inserción para la pareja en mision_secreta" ON public.mision_secreta_game FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.uid() = partner_id);
+CREATE POLICY "Permitir actualización para la pareja en mision_secreta" ON public.mision_secreta_game FOR UPDATE USING (auth.uid() = user_id OR auth.uid() = partner_id);
+
+-- Políticas para: most_likely_answers
+CREATE POLICY "Permitir lectura para la pareja en most_likely" ON public.most_likely_answers FOR SELECT USING (auth.uid() = user_id OR couple_id = auth.uid());
+CREATE POLICY "Permitir inserción propia en most_likely" ON public.most_likely_answers FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Permitir actualización propia en most_likely" ON public.most_likely_answers FOR UPDATE USING (auth.uid() = user_id);
+
+-- Políticas para: recompensas_canjeadas
+CREATE POLICY "Usuarios pueden ver los canjes de su pareja" ON public.recompensas_canjeadas FOR SELECT TO authenticated USING (auth.uid() = user_id OR EXISTS (SELECT 1 FROM public.profiles WHERE public.profiles.id = auth.uid() AND public.profiles.couple_id = recompensas_canjeadas.user_id));
+CREATE POLICY "Usuarios pueden registrar sus propios canjes" ON public.recompensas_canjeadas FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Políticas para: chat_sessions y chat_messages
+CREATE POLICY "Usuarios pueden ver sus propias sesiones" ON public.chat_sessions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Usuarios pueden crear sus propias sesiones" ON public.chat_sessions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Usuarios pueden borrar sus propias sesiones" ON public.chat_sessions FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Usuarios pueden ver mensajes de sus sesiones" ON public.chat_messages FOR SELECT USING (EXISTS (SELECT 1 FROM public.chat_sessions WHERE public.chat_sessions.id = chat_messages.session_id AND public.chat_sessions.user_id = auth.uid()));
+CREATE POLICY "Usuarios pueden insertar mensajes en sus sesiones" ON public.chat_messages FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.chat_sessions WHERE public.chat_sessions.id = chat_messages.session_id AND public.chat_sessions.user_id = auth.uid()));

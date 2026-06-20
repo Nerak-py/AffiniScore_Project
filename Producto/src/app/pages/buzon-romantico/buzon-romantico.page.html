@@ -1,0 +1,245 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="light-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToPath()" class="back-btn">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Los 3 Deseos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="deseos-content">
+  <!-- Confeti de Victoria -->
+  @if (showConfetti()) {
+    <div class="confetti-wrapper">
+      @for (piece of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track $index) {
+        <div class="confetti-piece" [style.left.%]="100 * ($index / 20)" [style.animation-delay.ms]="$index * 150"></div>
+      }
+    </div>
+  }
+
+  <div class="container-wrapper ion-padding">
+
+    <!-- ESTADO: CARGANDO -->
+    @if (gameState() === 'loading') {
+      <div class="centered-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p class="state-text">Abriendo el buzón...</p>
+      </div>
+    }
+
+    <!-- ESTADO: ACTIVO -->
+    @if (gameState() === 'active') {
+
+      <!-- CASO A: AMBOS HAN CONCEDIDO TODOS LOS DESEOS (VICTORIA FINAL) -->
+      @if (myCompletedCount() === 3 && partnerCompletedCount() === 3) {
+        <div class="finished-layout">
+          <div class="finished-card white-card">
+            <div class="trophy-large-badge pulse">
+              <ion-icon name="gift-outline"></ion-icon>
+            </div>
+            <h2 class="finished-title">¡Camino Completado!</h2>
+            <p class="finished-subtitle">¡Felicidades! Han concedido todos los deseos del otro y completado toda la Fase 1 del Camino. ¡Son una pareja ejemplar! 💖</p>
+
+            <div class="xp-gain-box">
+              <span class="xp-number">+1000 XP</span>
+              <span class="xp-text">Cofre de Experiencia obtenido</span>
+            </div>
+
+            <div class="results-breakdown">
+              <h3 class="breakdown-title">Deseos Concedidos</h3>
+              <div class="result-row result-correct">
+                <ion-icon name="checkmark-circle-outline" class="result-icon"></ion-icon>
+                <div class="result-info">
+                  <p class="result-question">Tus deseos concedidos por {{ partnerName() }}</p>
+                  @for (d of myDeseos(); track $index) {
+                    <p class="result-answer">• "{{ d.texto }}"</p>
+                  }
+                </div>
+              </div>
+              <div class="result-row result-correct">
+                <ion-icon name="checkmark-circle-outline" class="result-icon"></ion-icon>
+                <div class="result-info">
+                  <p class="result-question">Los deseos de {{ partnerName() }} concedidos por ti</p>
+                  @for (d of partnerDeseos(); track $index) {
+                    <p class="result-answer">• "{{ d.texto }}"</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+            Volver al Camino
+          </button>
+        </div>
+      } @else {
+
+        <!-- CASO B: JUGANDO / EN PROGRESO -->
+        <div class="deseos-layout">
+
+          <!-- FASE 1: CREACIÓN DE DESEOS SI EL USUARIO NO LOS HA ENVIADO -->
+          @if (!myDeseosSubmitted()) {
+            <div class="setup-card white-card">
+              <div class="category-badge secret-badge">
+                <ion-icon name="mail-outline"></ion-icon>
+                <span>Buzón Romántico</span>
+              </div>
+              <h2 class="section-title">¿Qué 3 detalles te harían suspirar esta semana? 💌</h2>
+              <p class="mision-text-desc">Escribe 3 cosas sencillas que tu pareja pueda hacer por ti (ej. "Que me prepare un té", "Que me abrace al llegar", "Una carta corta"). Tu pareja los verá en su buzón:</p>
+
+              <div class="inputs-group">
+                <div class="input-item">
+                  <span class="input-label">Deseo Romántico #1</span>
+                  <ion-textarea 
+                    [(ngModel)]="deseo1Input" 
+                    placeholder="Ej. Que me prepare mi postre favorito por sorpresa" 
+                    class="elegant-input" 
+                    rows="2">
+                  </ion-textarea>
+                </div>
+
+                <div class="input-item">
+                  <span class="input-label">Deseo Romántico #2</span>
+                  <ion-textarea 
+                    [(ngModel)]="deseo2Input" 
+                    placeholder="Ej. Un masaje de pies de 10 min al llegar del trabajo" 
+                    class="elegant-input" 
+                    rows="2">
+                  </ion-textarea>
+                </div>
+
+                <div class="input-item">
+                  <span class="input-label">Deseo Romántico #3</span>
+                  <ion-textarea 
+                    [(ngModel)]="deseo3Input" 
+                    placeholder="Ej. Que elijamos una película juntos y me abrace fuerte" 
+                    class="elegant-input" 
+                    rows="2">
+                  </ion-textarea>
+                </div>
+              </div>
+
+              <button 
+                (click)="saveMyDeseos()" 
+                [disabled]="isSubmitting()"
+                class="action-btn-primary submit-btn">
+                @if (isSubmitting()) {
+                  <ion-spinner name="crescent"></ion-spinner>
+                } @else {
+                  Depositar Deseos en el Buzón ✉️
+                }
+              </button>
+            </div>
+          } @else {
+            <!-- FASE 2: BUZÓN ROMÁNTICO CRUZADO -->
+
+            <!-- TARJETA 1: MIS DESEOS (LOS QUE MI PAREJA DEBE CUMPLIRME) -->
+            <div class="setup-card white-card my-deseos-card">
+              <div class="category-badge secret-badge">
+                <ion-icon name="sparkles-outline"></ion-icon>
+                <span>Tus Deseos para {{ partnerName() }}</span>
+              </div>
+              <h2 class="section-title">Tus deseos en espera ✉️</h2>
+              <p class="mision-text-desc">Tu pareja puede ver estos deseos y los marcará a medida que te los conceda en la vida real:</p>
+
+              <div class="deseos-list">
+                @for (d of myDeseos(); track $index) {
+                  <div class="deseo-item-card" [class.completed]="d.completado">
+                    <div class="deseo-left">
+                      @if (d.completado) {
+                        <ion-icon name="checkmark-circle-outline" class="completed-icon"></ion-icon>
+                      } @else {
+                        <div class="index-badge">{{ $index + 1 }}</div>
+                      }
+                    </div>
+                    <div class="deseo-content">
+                      <p class="deseo-text" [class.strikethrough]="d.completado">{{ d.texto }}</p>
+                    </div>
+                    @if (d.completado) {
+                      <div class="completed-label">¡Concedido!</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="progress-summary">
+                <span>Avance de tu pareja:</span>
+                <strong>{{ myCompletedCount() }}/3 concedidos</strong>
+              </div>
+            </div>
+
+            <!-- TARJETA 2: EL BUZÓN DE MI PAREJA (LOS QUE YO DEBO CUMPLIRLE) -->
+            <div class="setup-card white-card partner-deseos-card">
+              <div class="category-badge partner-badge">
+                <ion-icon name="mail-outline"></ion-icon>
+                <span>Buzón de {{ partnerName() }}</span>
+              </div>
+
+              @if (!partnerDeseosSubmitted()) {
+                <!-- Mi pareja no ha enviado sus deseos -->
+                <div class="waiting-state text-center">
+                  <div class="mail-icon-badge bounce">
+                    <ion-icon name="mail-outline"></ion-icon>
+                  </div>
+                  <h3 class="status-title">Esperando a {{ partnerName() }}</h3>
+                  <p class="status-desc">Tu pareja aún está pensando qué detalles románticos depositar en el buzón. ¡Te notificaremos cuando estén listos!</p>
+                </div>
+              } @else {
+                <!-- Lista de deseos de mi pareja -->
+                <h2 class="section-title">Concede los deseos de tu pareja ❤️</h2>
+                <p class="mision-text-desc">Sorprende a tu pareja concediéndole estos deseos. Cuando lo hagas en la vida real, pulsa "Conceder Deseo":</p>
+
+                <!-- Barra de progreso superior -->
+                <div class="partner-progress-section">
+                  <div class="progress-info">
+                    <span>Deseos de {{ partnerName() }} concedidos:</span>
+                    <span class="progress-val">{{ partnerCompletedCount() }}/3</span>
+                  </div>
+                  <div class="mini-progress-bar-container">
+                    <div class="mini-progress-bar-fill" [style.width.%]="(partnerCompletedCount() / 3) * 100"></div>
+                  </div>
+                </div>
+
+                <div class="deseos-list">
+                  @for (d of partnerDeseos(); track $index) {
+                    <div class="deseo-item-card" [class.completed]="d.completado">
+                      <div class="deseo-left">
+                        @if (d.completado) {
+                          <ion-icon name="checkmark-circle-outline" class="completed-icon"></ion-icon>
+                        } @else {
+                          <div class="index-badge partner-badge-bg">{{ $index + 1 }}</div>
+                        }
+                      </div>
+                      <div class="deseo-content">
+                        <p class="deseo-text" [class.strikethrough]="d.completado">{{ d.texto }}</p>
+                      </div>
+
+                      @if (!d.completado) {
+                        <button 
+                          (click)="concederDeseo($index)" 
+                          [disabled]="isSubmitting()"
+                          class="conceder-btn">
+                          Conceder
+                        </button>
+                      } @else {
+                        <div class="completed-label partner-label">¡Cumplido!</div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+          }
+
+          <button (click)="goBackToPath()" class="action-btn-secondary">
+            Volver al Camino
+          </button>
+        </div>
+      }
+    }
+
+  </div>
+</ion-content>

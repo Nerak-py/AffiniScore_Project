@@ -1,0 +1,90 @@
+<ion-menu contentId="main-content" side="start" menuId="chat-menu">
+  <ion-header class="ion-no-border">
+    <ion-toolbar class="custom-toolbar">
+      <ion-title>Historial de Chats</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding menu-content">
+    <!-- Botón Nuevo Chat -->
+    <ion-button expand="block" fill="solid" color="primary" class="new-chat-btn" (click)="newChat()">
+      <ion-icon slot="start" name="add"></ion-icon>
+      Nuevo Chat
+    </ion-button>
+    
+    <!-- Lista de Chats Anteriores -->
+    <ion-list class="menu-list">
+      <ion-menu-toggle auto-hide="false" *ngFor="let session of chatService.sessions()">
+        <ion-item button (click)="selectSession(session.id)" [class.active-session]="session.id === chatService.currentSessionId()">
+          <ion-icon slot="start" name="chatbubbles-outline" class="chat-item-icon"></ion-icon>
+          <ion-label>
+            <h3>{{ session.titulo }}</h3>
+            <p>{{ session.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<div class="ion-page" id="main-content">
+  <ion-header [translucent]="true" class="ion-no-border">
+    <ion-toolbar class="custom-toolbar">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Afi</ion-title>
+      <ion-avatar slot="end" class="header-avatar">
+        <ion-icon name="heart" class="afi-icon"></ion-icon>
+      </ion-avatar>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content [fullscreen]="true" #content class="chat-content ion-padding">
+  
+    <div class="messages-container">
+      <div *ngIf="chatService.messages().length === 0" class="empty-state">
+        <div class="empty-icon-wrapper">
+          <ion-icon name="heart"></ion-icon>
+        </div>
+        <h2>Hola, soy Afi</h2>
+        <p>Estoy aquí para escucharles y ayudar a que su relación florezca. ¿Qué tienen en mente hoy?</p>
+      </div>
+  
+      <div *ngFor="let msg of chatService.messages()" class="message-wrapper"
+        [ngClass]="{'user': msg.role === 'user', 'ai': msg.role === 'model'}">
+  
+        <div *ngIf="msg.role === 'model'" class="msg-avatar-wrapper">
+          <ion-icon name="heart" class="afi-bubble-icon"></ion-icon>
+        </div>
+  
+        <div class="message-bubble">
+          <p>{{ msg.content }}</p>
+        </div>
+      </div>
+  
+      <!-- Loading state -->
+      <div *ngIf="chatService.isLoading()" class="message-wrapper ai">
+        <div class="msg-avatar-wrapper">
+          <ion-icon name="heart" class="afi-bubble-icon"></ion-icon>
+        </div>
+        <div class="message-bubble typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  
+  </ion-content>
+  
+  <ion-footer class="ion-no-border">
+    <ion-toolbar class="footer-toolbar">
+      <div class="input-container">
+        <ion-textarea [(ngModel)]="newMessage" placeholder="Escribe tu mensaje..." autoGrow="true" rows="1"
+          (keydown.enter)="sendMessage(); $event.preventDefault()">
+        </ion-textarea>
+        <ion-button fill="clear" (click)="sendMessage()" [disabled]="chatService.isLoading() || !newMessage.trim()">
+          <ion-icon slot="icon-only" name="send"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-toolbar>
+  </ion-footer>
+</div>

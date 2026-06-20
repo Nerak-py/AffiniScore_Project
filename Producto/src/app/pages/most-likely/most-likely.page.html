@@ -1,0 +1,184 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="glass-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToPath()" class="back-btn">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>¿Quién es más probable?</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="activity-content">
+  <div class="background-glow">
+    <div class="circle cyan"></div>
+    <div class="circle magenta"></div>
+  </div>
+
+  <div class="container-wrapper ion-padding">
+    
+    <!-- STATE 1: LOADING -->
+    @if (gameState() === 'loading') {
+      <div class="centered-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p class="state-text">Cargando la actividad...</p>
+      </div>
+    }
+
+    <!-- STATE 2: PLAYING -->
+    @if (gameState() === 'playing') {
+      <div class="game-play-area">
+        
+        <!-- Progreso -->
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>Pregunta {{ currentQuestionIndex() + 1 }} de 10</span>
+            <span class="percentage">{{ (currentQuestionIndex() + 1) * 10 }}%</span>
+          </div>
+          <ion-progress-bar [value]="(currentQuestionIndex() + 1) / 10" color="primary" class="custom-progress"></ion-progress-bar>
+        </div>
+
+        <!-- Tarjeta de Pregunta -->
+        <div class="question-card-wrapper">
+          <div class="question-card">
+            <div class="card-glow"></div>
+            <div class="card-content-inner">
+              <div class="heart-badge">
+                <ion-icon name="heart-outline"></ion-icon>
+              </div>
+              <h2 class="question-text">{{ questions[currentQuestionIndex()] }}</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Respuesta -->
+        <div class="answers-buttons-grid">
+          <button (click)="selectAnswer('me')" class="choice-btn me-btn" [class.selected]="answers()[currentQuestionIndex()] === 'me'">
+            <div class="btn-glow"></div>
+            <span class="emoji">🙋‍♂️</span>
+            <span class="btn-text">Yo</span>
+          </button>
+          
+          <button (click)="selectAnswer('partner')" class="choice-btn partner-btn" [class.selected]="answers()[currentQuestionIndex()] === 'partner'">
+            <div class="btn-glow"></div>
+            <span class="emoji">💞</span>
+            <span class="btn-text">{{ partnerName() }}</span>
+          </button>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation-controls">
+          <button (click)="prevQuestion()" [disabled]="currentQuestionIndex() === 0" class="nav-arrow-btn">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+            Atrás
+          </button>
+          
+          <button (click)="nextQuestion()" [disabled]="currentQuestionIndex() === 9 || answers()[currentQuestionIndex()] === ''" class="nav-arrow-btn">
+            Siguiente
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+
+      </div>
+    }
+
+    <!-- STATE 3: WAITING -->
+    @if (gameState() === 'waiting') {
+      <div class="centered-state waiting-container">
+        <div class="pulse-loader">
+          <div class="pulse-ring ring-1"></div>
+          <div class="pulse-ring ring-2"></div>
+          <ion-icon name="time-outline" class="waiting-icon"></ion-icon>
+        </div>
+        
+        <h2 class="waiting-title">¡Respuestas Guardadas!</h2>
+        <p class="waiting-subtitle">Esperando que <strong>{{ partnerName() }}</strong> complete sus respuestas...</p>
+        
+        <div class="waiting-card">
+          <p>
+            Te avisaremos en cuanto tu pareja termine para que puedan ver cuántas coincidencias tuvieron y reclamar sus puntos.
+          </p>
+        </div>
+
+        <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+          Volver al Camino
+        </button>
+      </div>
+    }
+
+    <!-- STATE 4: RESULTS -->
+    @if (gameState() === 'results') {
+      <div class="results-container">
+        
+        <!-- Tarjeta de Trofeo principal -->
+        <div class="summary-card">
+          <div class="trophy-badge">
+            <ion-icon name="trophy-outline"></ion-icon>
+          </div>
+          <h2 class="matches-title">¡Juego Completado!</h2>
+          <div class="stats-badge-row">
+            <span class="stat-badge matches">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              {{ matchesCount() }} / 10 Coincidencias
+            </span>
+            <span class="stat-badge xp">
+              <ion-icon name="sparkles-outline"></ion-icon>
+              +{{ xpEarned() }} XP Ganados
+            </span>
+          </div>
+          
+          <p class="summary-eval">
+            @if (matchesCount() >= 8) {
+              ¡Están increíblemente sintonizados! Se conocen a la perfección.
+            } @else if (matchesCount() >= 5) {
+              ¡Muy buena conexión! Tienen respuestas muy similares.
+            } @else {
+              ¡Vaya! Parece que hay cosas en las que no se ponen de acuerdo, ¡una buena excusa para conversar!
+            }
+          </p>
+        </div>
+
+        <!-- Desglose de Preguntas -->
+        <h3 class="breakdown-header">Detalle del Juego</h3>
+        
+        <div class="breakdown-list">
+          @for (q of questions; track $index) {
+            @let isMatch = (myAnswers()[$index] === 'me' && partnerAnswers()[$index] === 'partner') || (myAnswers()[$index] === 'partner' && partnerAnswers()[$index] === 'me');
+            <div class="breakdown-item" [class.match-item]="isMatch" [class.mismatch-item]="!isMatch">
+              <div class="item-header">
+                <span class="q-number">#{{ $index + 1 }}</span>
+                <span class="match-indicator" [class.is-match]="isMatch">
+                  @if (isMatch) {
+                    <ion-icon name="checkmark-circle-outline"></ion-icon> Coinciden
+                  } @else {
+                    <ion-icon name="close-circle-outline"></ion-icon> Diferente
+                  }
+                </span>
+              </div>
+              
+              <p class="q-title">{{ q }}</p>
+              
+              <div class="answers-comparison">
+                <div class="compare-col">
+                  <span class="user-label">Tú dijiste:</span>
+                  <strong class="user-value">{{ myAnswers()[$index] === 'me' ? 'Yo' : partnerName() }}</strong>
+                </div>
+                <div class="compare-col">
+                  <span class="user-label">{{ partnerName() }} dijo:</span>
+                  <strong class="user-value">{{ partnerAnswers()[$index] === 'me' ? 'Yo' : 'Tú' }}</strong>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <button (click)="goBackToPath()" class="action-btn-primary finish-btn">
+          Volver al Camino
+        </button>
+
+      </div>
+    }
+
+  </div>
+</ion-content>

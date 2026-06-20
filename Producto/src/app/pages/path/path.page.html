@@ -1,0 +1,80 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <!-- Stats Bar -->
+    <div class="header-stats">
+      <div class="stats">
+        <div class="stat flame">
+          <ion-icon name="flame"></ion-icon> {{ supabase.userScore().streak }}
+        </div>
+        <div class="stat heart">
+          <ion-icon name="heart"></ion-icon> {{ supabase.userScore().hearts }}
+        </div>
+        <div class="stat star">
+          <ion-icon name="star"></ion-icon> {{ supabase.userScore().xp }} XP
+        </div>
+      </div>
+    </div>
+    <!-- Progress Bar XP -->
+    <div class="progress-bg">
+        <div class="progress-fill"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scroll-y="true">
+  <div class="path-container" [style.height.px]="1200">
+    
+    <!-- Backdrop local para el paso 2 de la novela visual -->
+    <div class="local-backdrop" *ngIf="spotlight.showOverlay() && spotlight.currentStep() === 1"></div>
+    
+    <!-- SVG Path dinámico con viewBox ajustado -->
+    <svg class="path-svg" viewBox="0 0 100 1200" preserveAspectRatio="none">
+      <path [attr.d]="pathD()" fill="none" stroke="#F9A8B1" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+    </svg>
+
+    <!-- Imágenes decorativas de fondo de la mascota AFI -->
+    <img src="assets/images/Fondo2_Afi.png" class="bg-afi-kitty" alt="" />
+    <img src="assets/images/Fondo_Afi.png" class="bg-afi-grass" alt="" />
+
+    <!-- Nodos -->
+    <div *ngFor="let node of nodes()" 
+          class="node-wrapper"
+          [style.left.%]="node.x" 
+          [style.top.px]="node.y"
+          [class.highlight-spotlight]="isFirstLockedNode(node)">
+          
+      <button class="node-btn" 
+              [ngClass]="node.status"
+              (click)="onNodeClick(node)">
+        
+        <ion-icon [name]="getIconName(node.type, node.status)"></ion-icon>
+        
+        <!-- Indicador actual pulsante -->
+        <div class="pulse-ring" *ngIf="node.status === 'current'"></div>
+      </button>
+      
+      <div class="node-label">
+        <span class="label-text" [ngClass]="node.status">
+          {{node.id}}. {{node.title}}
+        </span>
+        <span class="completed-badge" *ngIf="node.status === 'completed'">
+          ¡Completado!
+        </span>
+      </div>
+      
+      <!-- Tooltip visual para nodos bloqueados -->
+      <div class="tooltip" *ngIf="node.status === 'locked'">
+        <ion-icon name="lock-closed" style="font-size: 10px; margin-right: 4px;"></ion-icon> Bloqueado
+      </div>
+    </div>
+
+    <!-- Mascota/Mensaje Burbuja -->
+    <div class="mascot-bubble">
+      <div class="bubble-text">¡Sigue creciendo nuestro amor!</div>
+      <div class="mascot-icon">
+        <ion-icon name="heart"></ion-icon>
+      </div>
+    </div>
+    
+  </div>
+</ion-content>

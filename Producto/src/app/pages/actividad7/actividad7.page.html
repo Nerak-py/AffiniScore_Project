@@ -1,0 +1,164 @@
+<ion-content [scrollEvents]="true" class="main-content">
+  <!-- FASE 1: Introducción de AFI (Estilo Novela Visual) -->
+  <div class="visual-novel-overlay" *ngIf="showPhase1()" (click)="onOverlayClick()">
+    <!-- Personaje (Afi) -->
+    <div class="character-container">
+      <img src="assets/images/afi.feliz.png" class="character-img" alt="AFI" />
+    </div>
+
+    <!-- Caja de Diálogo -->
+    <div class="dialogue-card" (click)="$event.stopPropagation(); onOverlayClick()">
+      <div class="dialogue-tag-badge">AFI</div>
+      <div class="dialogue-body-text">
+        {{ displayedText }}
+      </div>
+      
+      <!-- Indicador de Avance -->
+      <div class="continue-indicator">
+        <span class="indicator-text" *ngIf="displayedText.length === fullDialogueText.length">Toca para continuar</span>
+        <ion-icon name="sparkles-outline" class="indicator-icon"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2: El Dashboard 'AffiniScore' -->
+  <div class="dashboard-container" *ngIf="!showPhase1()">
+    <!-- Efecto decorativo de Confeti Flotante -->
+    <div class="confetti-wrapper" *ngIf="showConfetti()">
+      <div class="confetti-piece p1"></div>
+      <div class="confetti-piece p2"></div>
+      <div class="confetti-piece p3"></div>
+      <div class="confetti-piece p4"></div>
+      <div class="confetti-piece p5"></div>
+      <div class="confetti-piece p6"></div>
+      <div class="confetti-piece p7"></div>
+      <div class="confetti-piece p8"></div>
+      <div class="confetti-piece p9"></div>
+      <div class="confetti-piece p10"></div>
+    </div>
+
+    <!-- Cabecera del Dashboard -->
+    <div class="dashboard-header">
+      <ion-button fill="clear" size="small" class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <h1 class="header-title">El Reporte AffiniScore</h1>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="dashboard-scrollable">
+      <div class="intro-card-glow">
+        <ion-icon name="trophy-outline" class="trophy-header-icon"></ion-icon>
+        <h2>¡Felicidades, Pareja!</h2>
+        <p>Han completado todo el Camino del Amor. Este es el resumen de su hermosa conexión.</p>
+      </div>
+
+      <!-- El Medidor Principal (AffiniScore) -->
+      <div class="gauge-section">
+        <div class="circular-gauge-container">
+          <svg class="circular-gauge" viewBox="0 0 100 100">
+            <!-- Círculo de Fondo -->
+            <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+            <!-- Círculo de Progreso -->
+            <circle class="gauge-progress" cx="50" cy="50" r="40"
+                    stroke="url(#affinity-gradient)"
+                    stroke-dasharray="251.2"
+                    [attr.stroke-dashoffset]="dashOffset()"
+                    stroke-linecap="round">
+            </circle>
+            <!-- Degradado SVG para el progreso -->
+            <defs>
+              <linearGradient id="affinity-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff758c" />
+                <stop offset="100%" stop-color="#ff7eb3" />
+              </linearGradient>
+            </defs>
+          </svg>
+          
+          <!-- Texto del Medidor -->
+          <div class="gauge-inner-text">
+            <span class="gauge-pct">{{ affinityPercentage() }}%</span>
+            <span class="gauge-label">Afinidad Mutua</span>
+          </div>
+        </div>
+        
+        <!-- Etiqueta de rango de compatibilidad -->
+        <div class="gauge-badge">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          <span>Conexión Inquebrantable</span>
+        </div>
+      </div>
+
+      <!-- Métricas de Desempeño -->
+      <div class="metrics-grid">
+        <!-- 1. Total de XP -->
+        <ion-card class="metric-card xp-theme">
+          <div class="metric-icon-box">
+            <ion-icon name="flame-outline"></ion-icon>
+          </div>
+          <div class="metric-info">
+            <span class="metric-value">{{ totalXp() }} XP</span>
+            <span class="metric-label">Puntos Acumulados</span>
+          </div>
+        </ion-card>
+
+        <!-- 2. Deseos concedidos -->
+        <ion-card class="metric-card wishes-theme">
+          <div class="metric-icon-box">
+            <ion-icon name="gift-outline"></ion-icon>
+          </div>
+          <div class="metric-info">
+            <span class="metric-value">{{ deseosConcedidos() }}</span>
+            <span class="metric-label">Deseos Concedidos</span>
+          </div>
+        </ion-card>
+
+        <!-- 3. Aciertos Trivia -->
+        <ion-card class="metric-card trivia-theme">
+          <div class="metric-icon-box">
+            <ion-icon name="happy-outline"></ion-icon>
+          </div>
+          <div class="metric-info">
+            <span class="metric-value">{{ aciertosTrivia() }} / 16</span>
+            <span class="metric-label">Aciertos Trivia</span>
+          </div>
+        </ion-card>
+
+        <!-- 4. Retos Ruleta -->
+        <ion-card class="metric-card ruleta-theme">
+          <div class="metric-icon-box">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <div class="metric-info">
+            <span class="metric-value">{{ retosRuleta() }}</span>
+            <span class="metric-label">Giros de Ruleta</span>
+          </div>
+        </ion-card>
+      </div>
+
+      <!-- Botón de Exportación a Excel (XLSX) -->
+      <div class="export-btn-container">
+        <ion-button expand="block" shape="round" class="export-btn" (click)="exportToExcel()">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          Exportar a dispositivo (XLSX)
+        </ion-button>
+      </div>
+
+      <!-- Mensaje de Cierre -->
+      <div class="celebration-footer-card">
+        <ion-icon name="heart-outline" class="floating-heart"></ion-icon>
+        <h3>¡El amor es un camino continuo!</h3>
+        <p>AFI dice: "Sigan cultivando su complicidad, jugando y sorprendiéndose día tras día. ¡Son una pareja espectacular!"</p>
+      </div>
+
+      <!-- Botón de Acción -->
+      <div class="action-btn-container">
+        <ion-button expand="block" shape="round" class="finish-btn" (click)="finishReport()" [disabled]="isSaving()">
+          <span *ngIf="!isSaving()">Finalizar el Camino</span>
+          <ion-spinner name="crescent" *ngIf="isSaving()"></ion-spinner>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

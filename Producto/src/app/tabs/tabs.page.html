@@ -1,0 +1,62 @@
+<ion-tabs>
+  <!-- Capa Superpuesta (Overlay) de Afi para Vinculación -->
+  <div class="afi-linking-overlay" *ngIf="showLinkingOverlay" (click)="onOverlayClick($event)" [class.step-2]="currentStep === 1">
+    <!-- Personaje (Afi) -->
+    <div class="character-wrapper">
+      <img 
+        [src]="steps[currentStep].image" 
+        (error)="onImageError($event)" 
+        alt="Afi" 
+        class="character-image"
+      />
+    </div>
+
+    <!-- Caja de Diálogo -->
+    <div class="dialogue-box">
+      <!-- Etiqueta del Nombre -->
+      <div class="dialogue-tag">Afi</div>
+      
+      <!-- Texto de Diálogo -->
+      <div class="dialogue-text">
+        {{ displayedText }}
+      </div>
+
+      <!-- Icono parpadeante para indicar que se puede avanzar -->
+      <div class="advance-indicator" *ngIf="!isTyping">
+        <span class="indicator-arrow">▼</span>
+      </div>
+    </div>
+  </div>
+
+  <ion-tab-bar 
+    slot="bottom" 
+    class="custom-tab-bar" 
+    [class.dimmed]="showLinkingOverlay && currentStep < 2"
+    [class.raise-tab-bar]="showLinkingOverlay && currentStep === 2"
+  >
+    <ion-tab-button tab="path" href="/tabs/path" [class.dimmed-button]="showLinkingOverlay && currentStep === 2">
+      <ion-icon aria-hidden="true" name="map"></ion-icon>
+      <ion-label>Camino</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button 
+      tab="profile" 
+      href="/tabs/profile" 
+      (click)="onProfileClick()"
+      [class.highlight-profile]="showLinkingOverlay && currentStep === 2"
+    >
+      <ion-icon aria-hidden="true" name="person"></ion-icon>
+      <ion-label>Perfil</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="chat" href="/tabs/chat" [class.dimmed-button]="showLinkingOverlay && currentStep === 2">
+      <ion-icon aria-hidden="true" name="chatbubbles"></ion-icon>
+      <ion-label>Afi</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="recompensas" href="/tabs/recompensas" [class.dimmed-button]="showLinkingOverlay && currentStep === 2">
+      <ion-icon aria-hidden="true" name="gift"></ion-icon>
+      <ion-label>Premios</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

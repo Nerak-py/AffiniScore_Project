@@ -1,0 +1,203 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="glass-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToPath()" class="back-btn">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>La Ruleta Picante</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ruleta-content">
+  <!-- Efecto Confeti de Victoria -->
+  @if (showConfetti()) {
+    <div class="confetti-wrapper">
+      @for (piece of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track $index) {
+        <div class="confetti-piece" [style.left.%]="100 * ($index / 20)" [style.animation-delay.ms]="$index * 150"></div>
+      }
+    </div>
+  }
+
+  <!-- Brillos Neón del Fondo -->
+  <div class="background-glow">
+    <div class="glow-circle purple"></div>
+    <div class="glow-circle magenta"></div>
+  </div>
+
+  <div class="container-wrapper ion-padding">
+
+    <!-- ESTADO 1: CARGANDO -->
+    @if (gameState() === 'loading') {
+      <div class="centered-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p class="state-text">Cargando el juego...</p>
+      </div>
+    }
+
+    <!-- ESTADO 2: JUEGO ACTIVO -->
+    @if (gameState() === 'active' && gameData()) {
+      
+      @if (gameData().status === 'finished') {
+        <!-- PANTALLA FINAL ATRACTIVA -->
+        <div class="finished-layout animate__animated animate__fadeIn">
+          <div class="finished-card glass-card">
+            <div class="trophy-large-badge pulse">
+              <ion-icon name="trophy-outline"></ion-icon>
+            </div>
+            <h2 class="finished-title">¡Felicidades!</h2>
+            <p class="finished-subtitle">Han completado el desafío de la Ruleta Picante</p>
+            
+            <div class="xp-gain-box">
+              <span class="xp-number">+200 XP</span>
+              <span class="xp-text">Ganados por pareja</span>
+            </div>
+
+            <div class="final-stats">
+              <div class="stat-row">
+                <span class="stat-label">Tus giros completados:</span>
+                <span class="stat-val">{{ getMySpinsCount() }} / 3</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Giros de tu pareja:</span>
+                <span class="stat-val">{{ getPartnerSpinsCount() }} / 3</span>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+            Volver al Camino
+          </button>
+        </div>
+      } @else {
+        
+        <!-- Indicador visual de progreso de giros -->
+        <div class="spins-indicator-bar glass-card">
+          <div class="indicator-item">
+            <span class="indicator-label">Mis giros:</span>
+            <span class="indicator-value">{{ getMySpinsCount() }}/3</span>
+          </div>
+          <div class="indicator-divider">|</div>
+          <div class="indicator-item">
+            <span class="indicator-label">Giros de {{ partnerName() }}:</span>
+            <span class="indicator-value">{{ getPartnerSpinsCount() }}/3</span>
+          </div>
+        </div>
+
+        <!-- CASO A: ES MI TURNO DE GIRAR LA RULETA -->
+        @if (isMyTurn()) {
+          
+          <!-- Subcaso A.1: Aún no he girado (reto es nulo o juego completado) -->
+          @if (gameData().challenge === null || gameData().status === 'completed') {
+            <div class="spin-layout">
+              <h2 class="section-title">¡Es tu turno de girar!</h2>
+              <p class="section-desc">Gira la ruleta y prepárate para cumplir la acción que el destino elija.</p>
+
+              <!-- Contenedor Visual de la Ruleta -->
+              <div class="roulette-wrapper">
+                <div class="arrow-indicator"></div>
+                <div class="wheel-outer-ring">
+                  <div class="wheel" [style.transform]="'rotate(' + wheelRotation() + 'deg)'" [class.spinning]="isSpinning()">
+                    <!-- Gajos de la Ruleta -->
+                    @for (challenge of challenges; track $index) {
+                      <div class="slice" [style.transform]="'rotate(' + ($index * 60) + 'deg)'" [attr.data-index]="$index">
+                        <span class="slice-text">{{ challenge }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <div class="wheel-center-pin">
+                  <ion-icon name="heart-outline"></ion-icon>
+                </div>
+              </div>
+
+              <!-- Botón de Acción -->
+              <button (click)="spin()" [disabled]="isSpinning()" class="action-btn-primary spin-btn">
+                <ion-icon name="sync-outline" [class.animate-spin]="isSpinning()"></ion-icon>
+                {{ isSpinning() ? 'Girando la ruleta...' : '¡Girar Ruleta!' }}
+              </button>
+            </div>
+          }
+
+          <!-- Subcaso A.2: Ya giré, y estoy esperando que mi pareja lo valide -->
+          @if (gameData().challenge !== null && gameData().status === 'pending') {
+            <div class="waiting-validation-layout">
+              <div class="waiting-card glass-card">
+                <div class="heart-badge pulse">
+                  <ion-icon name="heart-outline"></ion-icon>
+                </div>
+                
+                <h2 class="waiting-title">¡Cumple tu Reto!</h2>
+                <p class="challenge-label">Tu acción elegida es:</p>
+                <div class="challenge-glowing-box">{{ gameData().challenge }}</div>
+                
+                <div class="validation-status-box">
+                  <ion-spinner name="dots" color="primary"></ion-spinner>
+                  <p>Esperando que <strong>{{ partnerName() }}</strong> confirme que cumpliste el reto...</p>
+                </div>
+              </div>
+
+              <button (click)="goBackToPath()" class="action-btn-secondary return-btn">
+                Volver al Camino
+              </button>
+            </div>
+          }
+
+        }
+
+        <!-- CASO B: ES EL TURNO DE MI PAREJA -->
+        @if (!isMyTurn()) {
+          
+          <!-- Subcaso B.1: Mi pareja aún no ha girado la ruleta -->
+          @if (gameData().challenge === null || gameData().status === 'completed') {
+            <div class="waiting-turn-layout">
+              <div class="waiting-turn-card glass-card">
+                <div class="pulse-loader">
+                  <div class="pulse-ring ring-1"></div>
+                  <div class="pulse-ring ring-2"></div>
+                  <ion-icon name="time-outline" class="waiting-icon"></ion-icon>
+                </div>
+                
+                <h2 class="waiting-title">Turno de {{ partnerName() }}</h2>
+                <p class="waiting-desc">
+                  {{ partnerName() }} está por girar la ruleta. En cuanto lo haga, aparecerá el reto en tu pantalla para que puedas validarlo.
+                </p>
+              </div>
+
+              <button (click)="goBackToPath()" class="action-btn-primary return-btn">
+                Volver al Camino
+              </button>
+            </div>
+          }
+
+          <!-- Subcaso B.2: Mi pareja ya giró, y me toca a mí validarlo -->
+          @if (gameData().challenge !== null && gameData().status === 'pending') {
+            <div class="validator-layout">
+              <div class="validator-card glass-card">
+                <div class="trophy-badge">
+                  <ion-icon name="trophy-outline"></ion-icon>
+                </div>
+                
+                <h2 class="validator-title">¡Es hora de Validar!</h2>
+                <p class="validator-desc">A <strong>{{ partnerName() }}</strong> le tocó cumplir el siguiente reto:</p>
+                
+                <div class="challenge-glowing-box">{{ gameData().challenge }}</div>
+                
+                <p class="validator-question">¿{{ partnerName() }} cumplió el reto con éxito?</p>
+              </div>
+
+              <button (click)="validate()" class="action-btn-primary validate-btn">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                ¡Reto Cumplido! (+200 XP)
+              </button>
+            </div>
+          }
+
+        }
+
+      }
+
+    }
+
+  </div>
+</ion-content>

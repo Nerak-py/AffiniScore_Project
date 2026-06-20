@@ -1,0 +1,267 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Actos de Servicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" scroll-y="true">
+  <!-- Spinner general de carga de datos -->
+  <div class="loader-container" *ngIf="isLoading() && !isSubmitting()">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Cargando información...</p>
+  </div>
+
+  <div class="page-container" *ngIf="!isLoading()">
+    
+    <!-- ESTADO A: Formulario de Configuración Inicial (No he enviado) -->
+    <div class="setup-form-container fade-in" *ngIf="!hasSubmitted()">
+      <div class="welcome-section text-center">
+        <div class="heart-icon-wrapper pulse-heart">
+          <ion-icon name="heart" class="heart-icon"></ion-icon>
+        </div>
+        <h1 class="main-title">
+          Para empezar, ¿qué acto de servicio te gustaría que tu pareja hiciera por ti?
+        </h1>
+        <p class="subtitle">
+          Selecciona las sugerencias automáticas y/o escribe actos personalizados que te harían sentir amado/a y apoyado/a.
+        </p>
+      </div>
+
+      <!-- Sugerencias Predeterminadas -->
+      <div class="card glass-card mt-4">
+        <h2 class="section-title">Sugerencias recomendadas</h2>
+        
+        <div class="suggestions-list">
+          <div 
+            *ngFor="let suggestion of defaultSuggestions" 
+            class="suggestion-item" 
+            [ngClass]="{'checked': suggestion.selected}"
+            (click)="suggestion.selected = !suggestion.selected"
+          >
+            <div class="checkbox-custom">
+              <ion-icon name="checkmark-circle" *ngIf="suggestion.selected" class="check-icon"></ion-icon>
+              <div class="checkbox-circle-empty" *ngIf="!suggestion.selected"></div>
+            </div>
+            <span class="suggestion-text">{{ suggestion.title }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entradas Personalizadas -->
+      <div class="card glass-card mt-3">
+        <h2 class="section-title">Actos personalizados (Opcionales)</h2>
+        <p class="section-desc">Escribe peticiones específicas y personales para tu pareja.</p>
+        
+        <div class="input-group">
+          <ion-label class="elegant-label">Petición personalizada 1</ion-label>
+          <ion-input 
+            [(ngModel)]="customAct1" 
+            placeholder="Ej. Que me prepare un café en la mañana" 
+            class="elegant-input"
+            [disabled]="isSubmitting()"
+          ></ion-input>
+        </div>
+
+        <div class="input-group mt-3">
+          <ion-label class="elegant-label">Petición personalizada 2</ion-label>
+          <ion-input 
+            [(ngModel)]="customAct2" 
+            placeholder="Ej. Que ordene el living antes de dormir" 
+            class="elegant-input"
+            [disabled]="isSubmitting()"
+          ></ion-input>
+        </div>
+      </div>
+
+      <!-- Botón de Envío -->
+      <div class="btn-container mt-4 mb-4">
+        <ion-button 
+          expand="block" 
+          class="main-button gradient-button" 
+          (click)="submitSetup()"
+          [disabled]="isSubmitting()"
+        >
+          <span *ngIf="!isSubmitting()">Enviar a mi pareja</span>
+          <ion-spinner name="crescent" *ngIf="isSubmitting()"></ion-spinner>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- ESTADO B: Espera (Yo envié pero mi pareja no) -->
+    <div class="waiting-container fade-in text-center" *ngIf="hasSubmitted() && !partnerHasSubmitted()">
+      <div class="hourglass-wrapper">
+        <div class="pulse-ring"></div>
+        <div class="heart-pulse-container">
+          <ion-icon name="heart" class="icon-pulse-large"></ion-icon>
+        </div>
+      </div>
+      <h1 class="waiting-title">Esperando las peticiones de tu pareja...</h1>
+      <p class="waiting-subtitle">
+        ¡Excelente! Ya guardamos tus peticiones. Tan pronto como tu pareja envíe las suyas, se activará el panel de tareas en tiempo real.
+      </p>
+      
+      <div class="card glass-card mt-4 text-left">
+        <h3 class="card-title text-center mb-3">Tus peticiones guardadas:</h3>
+        <ul class="saved-acts-list">
+          <li *ngFor="let act of myActs()" class="saved-act-item">
+            <ion-icon name="checkmark-circle-outline" color="success" class="mr-2"></ion-icon>
+            <span>{{ act.title }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ESTADO C: Panel de Tareas (Ambos enviaron) -->
+    <div class="panel-container fade-in" *ngIf="hasSubmitted() && partnerHasSubmitted()">
+      
+      <!-- Segmented Tabs / Tabs de Navegación -->
+      <div class="tabs-header">
+        <div 
+          class="tab-btn" 
+          [ngClass]="{'active': activeTab() === 'tasks'}"
+          (click)="activeTab.set('tasks')"
+        >
+          <ion-icon name="gift-outline" class="mr-2"></ion-icon>
+          <span>Tareas para mí</span>
+        </div>
+        <div 
+          class="tab-btn" 
+          [ngClass]="{'active': activeTab() === 'requests'}"
+          (click)="activeTab.set('requests')"
+        >
+          <ion-icon name="heart" class="mr-2"></ion-icon>
+          <span>Mis peticiones</span>
+        </div>
+      </div>
+
+      <!-- Tab 1: Tareas para mí (Creadas por mi pareja para que yo las haga) -->
+      <div class="tab-content" *ngIf="activeTab() === 'tasks'">
+        <div class="welcome-panel-card mb-3">
+          <p class="panel-desc">
+            Estas son las cosas que tu pareja ha solicitado. Compleméntalas para demostrar tu amor y ganar estrellas y XP para subir de nivel.
+          </p>
+        </div>
+
+        <div class="tasks-list">
+          <div class="empty-state-panel" *ngIf="partnerActs().length === 0">
+            <p>No tienes tareas asignadas por el momento.</p>
+          </div>
+
+          <div *ngFor="let task of partnerActs()" class="task-card glass-card" [ngClass]="task.status">
+            <div class="task-card-header">
+              <span class="custom-badge" *ngIf="task.is_custom">Personalizado</span>
+              <span class="status-badge" [ngClass]="task.status">
+                {{ task.status === 'pending' ? 'Pendiente' : (task.status === 'completed' ? 'Completado' : 'Validado') }}
+              </span>
+            </div>
+            <h3 class="task-title">{{ task.title }}</h3>
+            
+            <div class="task-card-body">
+              <!-- Acción: Pendiente -->
+              <div *ngIf="task.status === 'pending'" class="action-section">
+                <ion-button 
+                  expand="block" 
+                  fill="outline" 
+                  color="primary"
+                  class="action-btn"
+                  (click)="markAsDone(task)"
+                >
+                  <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                  Marcar como Realizado
+                </ion-button>
+              </div>
+
+              <!-- Acción: Completado (Esperando valoración) -->
+              <div *ngIf="task.status === 'completed'" class="action-section waiting-eval">
+                <ion-icon name="time-outline" class="waiting-icon"></ion-icon>
+                <span>Esperando que tu pareja califique esta tarea...</span>
+              </div>
+
+              <!-- Acción: Validado (Completado y calificado con estrellas) -->
+              <div *ngIf="task.status === 'validated'" class="action-section rating-result">
+                <div class="stars-display">
+                  <ion-icon 
+                    *ngFor="let starIndex of [1,2,3,4,5]" 
+                    [name]="starIndex <= (task.rating || 0) ? 'star' : 'star-outline'"
+                    class="star-filled"
+                  ></ion-icon>
+                </div>
+                <span class="xp-badge">+{{ task.xp_awarded }} XP Ganados</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Mis Peticiones (Creadas por mí para mi pareja) -->
+      <div class="tab-content" *ngIf="activeTab() === 'requests'">
+        <div class="welcome-panel-card mb-3">
+          <p class="panel-desc">
+            Estas son tus peticiones. Cuando tu pareja las marque como realizadas, podrás calificarlas de 1 a 5 estrellas para agradecer su esfuerzo y otorgarle puntos.
+          </p>
+        </div>
+
+        <div class="tasks-list">
+          <div *ngFor="let task of myActs()" class="task-card glass-card" [ngClass]="task.status">
+            <div class="task-card-header">
+              <span class="custom-badge" *ngIf="task.is_custom">Personalizado</span>
+              <span class="status-badge" [ngClass]="task.status">
+                {{ task.status === 'pending' ? 'Pendiente' : (task.status === 'completed' ? 'Acción Requerida' : 'Calificado') }}
+              </span>
+            </div>
+            <h3 class="task-title">{{ task.title }}</h3>
+
+            <div class="task-card-body">
+              <!-- Pendiente por la pareja -->
+              <div *ngIf="task.status === 'pending'" class="action-section partner-pending">
+                <ion-icon name="time-outline" class="waiting-icon"></ion-icon>
+                <span>Tu pareja aún no realiza esta tarea...</span>
+              </div>
+
+              <!-- Completado por la pareja, esperando que yo califique -->
+              <div *ngIf="task.status === 'completed'" class="action-section rating-input-container">
+                <p class="rating-prompt">¡Tu pareja completó esta tarea! Califica su esfuerzo:</p>
+                
+                <div class="star-rating-selector">
+                  <ion-icon 
+                    *ngFor="let starNum of [1,2,3,4,5]" 
+                    [name]="starNum <= getTempRating(task.id) ? 'star' : 'star-outline'" 
+                    class="interactive-star"
+                    (click)="setTempRating(task.id, starNum)"
+                  ></ion-icon>
+                </div>
+                
+                <ion-button 
+                  expand="block" 
+                  class="action-btn gradient-button mt-3"
+                  (click)="rateTask(task)"
+                >
+                  <ion-icon name="send" slot="start"></ion-icon>
+                  Calificar con {{ getTempRating(task.id) }} ★
+                </ion-button>
+              </div>
+
+              <!-- Ya calificado -->
+              <div *ngIf="task.status === 'validated'" class="action-section rating-result">
+                <div class="stars-display">
+                  <ion-icon 
+                    *ngFor="let starIndex of [1,2,3,4,5]" 
+                    [name]="starIndex <= (task.rating || 0) ? 'star' : 'star-outline'"
+                    class="star-filled"
+                  ></ion-icon>
+                </div>
+                <span class="xp-badge partner-xp">+{{ task.xp_awarded }} XP Otorgados</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

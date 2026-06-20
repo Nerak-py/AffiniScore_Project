@@ -1,0 +1,99 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Mi Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" scroll-y="true">
+  <div class="profile-container">
+    
+    <!-- Bienvenida / Usuario Actual -->
+    <div class="welcome-header text-center mb-4">
+      <h1 class="welcome-title">¡Hola, {{ supabase.userProfile()?.full_name || supabase.currentUser()?.user_metadata?.['full_name'] || 'Usuario' }}!</h1>
+      <p class="welcome-subtitle">Estás usando esta cuenta.</p>
+    </div>
+
+    <!-- Sección de Código del Usuario -->
+    <div class="card glass-card">
+      <h2 class="card-title">Tu Código de Pareja</h2>
+      <p class="card-subtitle">Comparte este código con tu pareja para vincular sus cuentas.</p>
+      
+      <div class="code-display">
+        <span class="code">{{ supabase.userProfile()?.couple_code || 'Cargando...' }}</span>
+      </div>
+    </div>
+
+    <!-- Sección de Vinculación (Si no está vinculado) -->
+    <div class="card glass-card" *ngIf="!supabase.userProfile()?.couple_id">
+      <h2 class="card-title">Vincular Pareja</h2>
+      <p class="card-subtitle">Ingresa el código de tu pareja para comenzar el viaje juntos.</p>
+      
+      <div class="input-group">
+        <ion-input
+          [(ngModel)]="partnerCode"
+          placeholder="Ej: AF-1234"
+          class="custom-input"
+          [disabled]="isLinking()"
+        ></ion-input>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        class="main-button" 
+        (click)="linkPartner()"
+        [disabled]="isLinking() || !partnerCode">
+        {{ isLinking() ? 'Vinculando...' : 'Vincular' }}
+      </ion-button>
+
+      <p class="message" [ngClass]="{'success': linkSuccess(), 'error': !linkSuccess()}" *ngIf="linkMessage()">
+        {{ linkMessage() }}
+      </p>
+    </div>
+
+    <!-- Estado de Vinculación (Si ya está vinculado) -->
+    <div class="card glass-card linked-state" *ngIf="supabase.userProfile()?.couple_id">
+      <div class="heart-icon pulse">
+        <ion-icon name="heart"></ion-icon>
+      </div>
+      <h2 class="card-title text-center">¡Estás vinculado!</h2>
+      <p class="card-subtitle text-center">
+        Tú y tu pareja ya comparten este viaje.
+      </p>
+
+      <div class="couple-names-container text-center mt-3">
+        <p class="user-name">
+          <strong>Tú:</strong> {{ supabase.userProfile()?.full_name || supabase.currentUser()?.user_metadata?.['full_name'] || 'Cargando...' }}
+        </p>
+        <p class="partner-name" *ngIf="supabase.partnerProfile()">
+          <strong>Tu pareja:</strong> {{ supabase.partnerProfile()?.full_name || supabase.partnerProfile()?.couple_code }}
+        </p>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        fill="outline"
+        color="danger"
+        class="unlink-button mt-4" 
+        (click)="unlinkPartner()"
+        [disabled]="isLinking()">
+        {{ isLinking() ? 'Desvinculando...' : 'Desvincular' }}
+      </ion-button>
+
+
+
+      <p class="message text-center" [ngClass]="{'success': linkSuccess(), 'error': !linkSuccess()}" *ngIf="linkMessage()">
+        {{ linkMessage() }}
+      </p>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,525 @@
+/* Paleta de Colores y Tipografía */
+ion-content.main-content {
+  --background: linear-gradient(185deg, #fffcfd 0%, #fff0f2 100%);
+  font-family: 'Nunito', 'Inter', sans-serif;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  --padding-start: 0px;
+  --padding-end: 0px;
+}
+
+/* ==========================================================================
+   FASE 1: Novela Visual (AFI Overlay)
+   ========================================================================== */
+.visual-novel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Contenedor del personaje (Afi) */
+.character-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10000;
+  display: block;
+}
+
+.character-img {
+  position: absolute;
+  width: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+  transform-origin: bottom center;
+  z-index: 10000;
+  
+  /* Centrado horizontal exacto */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Animación combinada (Centrado + Respiración) */
+  animation: breatheCenter 4s infinite ease-in-out;
+
+  /* Tamaño gigante e inmersivo */
+  height: 105vh !important;  
+  bottom: -22vh;  
+
+  @media (min-width: 768px) {
+    height: 115vh !important;
+    bottom: -28vh;
+  }
+}
+
+@keyframes breatheCenter {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.03) translateY(-5px); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* Tarjeta de Diálogo estilo RPG */
+.dialogue-card {
+  background: rgba(22, 18, 38, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 24px;
+  padding-top: 32px;
+  min-height: 140px;
+  max-height: 200px;
+  position: relative;
+  z-index: 10001;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.dialogue-tag-badge {
+  position: absolute;
+  top: -16px;
+  left: 24px;
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+  color: white;
+  font-weight: 800;
+  padding: 6px 22px;
+  border-radius: 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(255, 117, 140, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dialogue-body-text {
+  color: #f3f4f6;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 500;
+  text-align: left;
+  flex-grow: 1;
+  word-wrap: break-word;
+}
+
+/* Indicador de avance */
+.continue-indicator {
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.indicator-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.indicator-icon {
+  color: #ff758c;
+  font-size: 16px;
+  animation: blink-sparkle 1.5s infinite ease-in-out;
+}
+
+@keyframes blink-sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.9) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+
+/* ==========================================================================
+   FASE 2: El Dashboard 'AffiniScore'
+   ========================================================================== */
+.dashboard-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  z-index: 10;
+}
+
+.back-btn {
+  --color: #ff758c;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #4a3e56;
+  text-align: center;
+  flex-grow: 1;
+  margin: 0;
+}
+
+.spacer {
+  width: 48px;
+}
+
+/* Contenido con scroll */
+.dashboard-scrollable {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+/* Tarjeta felicitación superior */
+.intro-card-glow {
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(244, 114, 182, 0.06);
+  border: 1px solid rgba(254, 219, 226, 0.6);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ff758c;
+    margin: 10px 0 6px 0;
+  }
+
+  p {
+    font-size: 13px;
+    color: #8a7e93;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.trophy-header-icon {
+  font-size: 40px;
+  color: #f59e0b;
+  animation: float-trophy 3s infinite ease-in-out;
+}
+
+@keyframes float-trophy {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-6px) rotate(8deg); }
+}
+
+/* Sección del Medidor Principal Circular */
+.gauge-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.circular-gauge-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+
+.circular-gauge {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* Empezar en la parte superior */
+}
+
+.gauge-bg {
+  fill: none;
+  stroke: #ffeef1;
+  stroke-width: 8px;
+}
+
+.gauge-progress {
+  fill: none;
+  stroke-width: 8px;
+  transition: stroke-dashoffset 0.8s ease-out;
+}
+
+/* Contenido dentro del círculo */
+.gauge-inner-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+
+  .gauge-pct {
+    font-size: 38px;
+    font-weight: 900;
+    color: #4a3e56;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .gauge-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ff758c;
+    text-transform: uppercase;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.gauge-badge {
+  margin-top: 16px;
+  background: linear-gradient(135deg, #fff2f4 0%, #ffe4e8 100%);
+  border: 1px solid #ffccd4;
+  color: #ff758c;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(255, 117, 140, 0.05);
+}
+
+/* Rejilla de Métricas */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  margin: 0;
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 20px rgba(244, 114, 182, 0.04);
+  border: 1px solid rgba(254, 219, 226, 0.3);
+  transition: transform 0.2s;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.metric-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #4a3e56;
+}
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9c8eab;
+  margin-top: 2px;
+}
+
+/* Colores personalizados por tarjeta */
+.xp-theme {
+  .metric-icon-box {
+    background: #fff3e0;
+    color: #f59e0b;
+  }
+}
+
+.wishes-theme {
+  .metric-icon-box {
+    background: #e0f2fe;
+    color: #0284c7;
+  }
+}
+
+.trivia-theme {
+  .metric-icon-box {
+    background: #fdf2f8;
+    color: #db2777;
+  }
+}
+
+.ruleta-theme {
+  .metric-icon-box {
+    background: #e8f5e9;
+    color: #16a34a;
+  }
+}
+
+/* Tarjeta Footer de Celebración */
+.celebration-footer-card {
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 30px rgba(244, 114, 182, 0.04);
+  border: 1px solid rgba(254, 219, 226, 0.4);
+  position: relative;
+  overflow: hidden;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #4a3e56;
+    margin: 0 0 6px 0;
+  }
+
+  p {
+    font-size: 12px;
+    color: #7c7087;
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.floating-heart {
+  font-size: 24px;
+  color: #ff758c;
+  opacity: 0.8;
+  animation: heartbeat 2.5s infinite ease-in-out;
+  margin-bottom: 8px;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.15); }
+  45% { transform: scale(1.08); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Botón de Cierre */
+.action-btn-container {
+  padding: 0 8px;
+}
+
+.finish-btn {
+  --background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+  --background-activated: linear-gradient(135deg, #e05e74 0%, #e06698 100%);
+  --box-shadow: 0 6px 20px rgba(255, 117, 140, 0.35);
+  font-weight: 800;
+  font-size: 16px;
+  height: 52px;
+  margin: 0;
+}
+
+
+/* ==========================================================================
+   Efectos de Confeti CSS
+   ========================================================================== */
+.confetti-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  background: #ffd300;
+  opacity: 0;
+  animation: fall 5s infinite linear;
+}
+
+.confetti-piece:nth-child(2n) { background: #ff758c; }
+.confetti-piece:nth-child(3n) { background: #0284c7; }
+.confetti-piece:nth-child(4n) { background: #16a34a; }
+.confetti-piece:nth-child(5n) { background: #db2777; }
+
+/* Posicionamiento y retraso de confeti */
+.p1 { left: 10%; animation-delay: 0s; animation-duration: 4.2s; }
+.p2 { left: 20%; animation-delay: 1.2s; animation-duration: 5.1s; }
+.p3 { left: 35%; animation-delay: 0.4s; animation-duration: 3.9s; }
+.p4 { left: 50%; animation-delay: 2.1s; animation-duration: 4.8s; }
+.p5 { left: 65%; animation-delay: 0.8s; animation-duration: 5.5s; }
+.p6 { left: 80%; animation-delay: 1.7s; animation-duration: 4.3s; }
+.p7 { left: 90%; animation-delay: 0.2s; animation-duration: 5s; }
+.p8 { left: 25%; animation-delay: 2.5s; animation-duration: 4.6s; }
+.p9 { left: 55%; animation-delay: 1.5s; animation-duration: 5.2s; }
+.p10 { left: 75%; animation-delay: 0.5s; animation-duration: 4s; }
+
+@keyframes fall {
+  0% {
+    top: -5%;
+    transform: rotate(0deg) translateX(0);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 95%;
+    transform: rotate(720deg) translateX(25px);
+    opacity: 0;
+  }
+}
+
+/* Botón de Exportación a Excel */
+.export-btn-container {
+  padding: 0 8px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+.export-btn {
+  --background: #ffeef1;
+  --color: #ff758c;
+  --background-activated: #ffd9e0;
+  --box-shadow: 0 4px 10px rgba(255, 117, 140, 0.1);
+  --border-color: #ffccd4;
+  --border-style: dashed;
+  --border-width: 1px;
+  font-weight: 700;
+  font-size: 15px;
+  height: 48px;
+  margin: 0;
+}
+
