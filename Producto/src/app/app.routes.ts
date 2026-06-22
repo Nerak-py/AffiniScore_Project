@@ -52,6 +52,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/buzon-romantico/buzon-romantico.page').then(m => m.BuzonRomanticoPage)
   },
   {
+    path: 'mision-secreta',
+    loadComponent: () => import('./pages/mision-secreta/mision-secreta.page').then(m => m.MisionSecretaPage)
+  },
+  {
     path: 'actividad7',
     loadComponent: () => import('./pages/actividad7/actividad7.page').then(m => m.Actividad7Page)
   },
