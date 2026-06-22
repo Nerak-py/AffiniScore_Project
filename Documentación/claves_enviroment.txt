@@ -1,0 +1,3 @@
+supabaseUrl:https://supabase.com/dashboard/project/ahtuiqrnrrqaglbsodig
+supabaseKey:sb_publishable_TjahixT1ESxG8BSShr7Vbw_Ug-9nEMZ
+ApiKey:'AQ.Ab8RN6KR3R5Ta4SpK90bYIY2Ej2jzPbN4Oh2rLVXaOd39KY6SA'
