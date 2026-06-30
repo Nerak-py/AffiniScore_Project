@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="Diseño sin título (6).png" alt="AffiniScore Banner" width="100%">
+  <img src="Affiniscore github.png" alt="AffiniScore Banner" width="100%">
 </p>
 
 <p align="center">
@@ -26,11 +26,11 @@
 - [🌟 Funcionalidades](#-funcionalidades)
 - [🫶 Tecnologías](#-tecnologías)
 - [💻 Requisitos del Sistema](#-requisitos-del-sistema)
-- [⚙️ Instalación y Ejecución](#-instalación-y-ejecución)
+- [⚙️ Instalación y Ejecución](#-instalación-y-ejecucion)
 - [📂 Estructura del Proyecto](#-estructura-del-proyecto)
 - [👥 Guía de Uso por Rol](#-guía-de-uso-por-rol)
 - [🔌 API de Puntos Finales (Endpoints)](#-api-de-puntos-finales-endpoints)
-- [🛠️ Guía de Desarrollo y Contribución](#-guía-de-desarrollo-y-contribución)
+- [🛠️ Guía de Desarrollo y Contribución](#-guia-de-desarrollo-y-contribución)
 - [👥 Equipo](#-equipo)
 
 
